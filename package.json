@@ -3,8 +3,15 @@
   "version": "1.1.0",
   "description": "Composite execution engine for Pharos Chain AI agents.",
   "main": "index.js",
+  "bin": {
+    "pharos-cli": "./bin/cli.js",
+    "pharos-mcp": "./bin/mcp-server.js"
+  },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
     "dotenv": "^17.4.2",
-    "ethers": "^6.13.0"
+    "ethers": "^6.13.0",
+    "yargs": "^17.7.2"
   }
 }
+
