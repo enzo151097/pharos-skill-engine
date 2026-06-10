@@ -5,7 +5,7 @@ description: >
   It screens transaction targets against an on-chain Protocol Registry, verifies slippage tolerances,
   simulates transaction previews via local Anvil forks/calls to identify reverts before execution,
   and optimizes EIP-1559 gas fees to prevent stuck transactions.
-version: 1.0.0
+version: 1.1.0
 requires:
   anyBins:
   - forge

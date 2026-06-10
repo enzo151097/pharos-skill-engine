@@ -1,9 +1,10 @@
 {
   "name": "pharos-execution-engine",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Composite execution engine for Pharos Chain AI agents.",
-  "main": "scripts/safe-execute.js",
+  "main": "index.js",
   "dependencies": {
+    "dotenv": "^17.4.2",
     "ethers": "^6.13.0"
   }
 }
