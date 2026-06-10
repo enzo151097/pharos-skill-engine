@@ -25,7 +25,10 @@ async function main() {
 
     console.log("\n1. Compiling Solidity contracts via forge...");
     try {
-        execSync("forge build", { stdio: "inherit" });
+        execSync("source ~/.bashrc && forge build", { 
+            shell: "C:\\Program Files\\Git\\bin\\bash.exe", 
+            stdio: "inherit" 
+        });
         console.log("✅ Compilation successful!");
     } catch (err) {
         console.error("❌ Compilation failed:", err.message);
@@ -35,35 +38,48 @@ async function main() {
     console.log("\n2. Deploying ExecutionEngine contracts via Ethers.js...");
     let registryAddress, guardAddress, engineAddress;
     try {
-        // Load Artifacts
-        const registryArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../out/ProtocolRegistry.sol/ProtocolRegistry.json"), "utf8"));
-        const guardArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../out/SlippageGuard.sol/SlippageGuard.json"), "utf8"));
-        const engineArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../out/ExecutionEngine.sol/ExecutionEngine.json"), "utf8"));
+        if (process.env.EXECUTION_ENGINE_CORE_ADDRESS && 
+            process.env.EXECUTION_ENGINE_REGISTRY_ADDRESS && 
+            process.env.EXECUTION_ENGINE_SLIPPAGE_GUARD_ADDRESS) {
+            
+            registryAddress = process.env.EXECUTION_ENGINE_REGISTRY_ADDRESS;
+            guardAddress = process.env.EXECUTION_ENGINE_SLIPPAGE_GUARD_ADDRESS;
+            engineAddress = process.env.EXECUTION_ENGINE_CORE_ADDRESS;
+            
+            console.log("Reusing already deployed contracts from environment variables:");
+            console.log(`- ProtocolRegistry: ${registryAddress}`);
+            console.log(`- SlippageGuard: ${guardAddress}`);
+            console.log(`- ExecutionEngine: ${engineAddress}`);
+        } else {
+            // Load Artifacts
+            const registryArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../out/ProtocolRegistry.sol/ProtocolRegistry.json"), "utf8"));
+            const guardArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../out/SlippageGuard.sol/SlippageGuard.json"), "utf8"));
+            const engineArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../out/ExecutionEngine.sol/ExecutionEngine.json"), "utf8"));
 
-        // Deploy ProtocolRegistry
-        console.log("Deploying ProtocolRegistry...");
-        const registryFactory = new ethers.ContractFactory(registryArtifact.abi, registryArtifact.bytecode.object, wallet);
-        const registry = await registryFactory.deploy();
-        await registry.waitForDeployment();
-        registryAddress = await registry.getAddress();
-        console.log(`✅ ProtocolRegistry deployed at: ${registryAddress}`);
+            // Deploy ProtocolRegistry
+            console.log("Deploying ProtocolRegistry...");
+            const registryFactory = new ethers.ContractFactory(registryArtifact.abi, registryArtifact.bytecode.object, wallet);
+            const registry = await registryFactory.deploy();
+            await registry.waitForDeployment();
+            registryAddress = await registry.getAddress();
+            console.log(`✅ ProtocolRegistry deployed at: ${registryAddress}`);
 
-        // Deploy SlippageGuard
-        console.log("Deploying SlippageGuard...");
-        const guardFactory = new ethers.ContractFactory(guardArtifact.abi, guardArtifact.bytecode.object, wallet);
-        const guard = await guardFactory.deploy();
-        await guard.waitForDeployment();
-        guardAddress = await guard.getAddress();
-        console.log(`✅ SlippageGuard deployed at: ${guardAddress}`);
+            // Deploy SlippageGuard
+            console.log("Deploying SlippageGuard...");
+            const guardFactory = new ethers.ContractFactory(guardArtifact.abi, guardArtifact.bytecode.object, wallet);
+            const guard = await guardFactory.deploy();
+            await guard.waitForDeployment();
+            guardAddress = await guard.getAddress();
+            console.log(`✅ SlippageGuard deployed at: ${guardAddress}`);
 
-        // Deploy ExecutionEngine
-        console.log("Deploying ExecutionEngine...");
-        const engineFactory = new ethers.ContractFactory(engineArtifact.abi, engineArtifact.bytecode.object, wallet);
-        const engine = await engineFactory.deploy(registryAddress, guardAddress);
-        await engine.waitForDeployment();
-        engineAddress = await engine.getAddress();
-        console.log(`✅ ExecutionEngine deployed at: ${engineAddress}`);
-
+            // Deploy ExecutionEngine
+            console.log("Deploying ExecutionEngine...");
+            const engineFactory = new ethers.ContractFactory(engineArtifact.abi, engineArtifact.bytecode.object, wallet);
+            const engine = await engineFactory.deploy(registryAddress, guardAddress);
+            await engine.waitForDeployment();
+            engineAddress = await engine.getAddress();
+            console.log(`✅ ExecutionEngine deployed at: ${engineAddress}`);
+        }
     } catch (err) {
         console.error("❌ Contract deployment failed:", err.message);
         process.exit(1);
@@ -73,18 +89,18 @@ async function main() {
     console.log("\n3. Deploying a mock contract target...");
     let mockTargetAddress;
     try {
-        const mockTargetAbi = [
-            "constructor()",
-            "function setValue(uint256 newVal) external",
-            "uint256 public value"
-        ];
-        const mockTargetBytecode = "0x6080604052348015600f57600080fd5b5060ab8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c80633fa4f24514603757806355241077146051575b50600080fd5b603d606f565b60405160489190608c565b60405180910390f35b606d60048036036020811015606257600080fd5b50356075565b005b60005481565b8060008190555050565b6000819050919050565b608681607b565b82525050565b6000602082019050609f6000830184607f565b9291505056fea2646970667358221220a536780c8ee210738f6b0f023ea0ea5eb5324838634ca330f81d11ca71c368d464736f6c63430008190033";
-        
-        const factory = new ethers.ContractFactory(mockTargetAbi, mockTargetBytecode, wallet);
-        const mockTarget = await factory.deploy();
-        await mockTarget.waitForDeployment();
-        mockTargetAddress = await mockTarget.getAddress();
-        console.log(`✅ MockTarget deployed at: ${mockTargetAddress}`);
+        if (process.env.EXECUTION_ENGINE_MOCK_TARGET_ADDRESS) {
+            mockTargetAddress = process.env.EXECUTION_ENGINE_MOCK_TARGET_ADDRESS;
+            console.log(`✅ Reusing MockTarget from environment: ${mockTargetAddress}`);
+        } else {
+            const mockTargetArtifact = JSON.parse(fs.readFileSync(path.join(__dirname, "../out/MockTarget.sol/MockTarget.json"), "utf8"));
+            
+            const factory = new ethers.ContractFactory(mockTargetArtifact.abi, mockTargetArtifact.bytecode.object, wallet);
+            const mockTarget = await factory.deploy();
+            await mockTarget.waitForDeployment();
+            mockTargetAddress = await mockTarget.getAddress();
+            console.log(`✅ MockTarget deployed at: ${mockTargetAddress}`);
+        }
     } catch (err) {
         console.error("❌ MockTarget deployment failed:", err.message);
         process.exit(1);
