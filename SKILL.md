@@ -62,6 +62,16 @@ Example:
 node scripts/safe-execute.js https://atlantic.dplabs-internal.com $PRIVATE_KEY 0xEngineAddress 0xTargetContract 0x38ed1739... 0
 ```
 
+## SDK Integration
+
+AI agents can directly instantiate and call the SDK in JavaScript:
+
+```javascript
+const { ExecutionEngineSDK } = require("pharos-execution-engine");
+const sdk = new ExecutionEngineSDK(rpcUrl, privateKey, engineAddress);
+const receipt = await sdk.safeExecute(targetAddress, calldata, value);
+```
+
 ## Testing
 
 Run unit tests via Forge:

@@ -68,6 +68,36 @@ node scripts/demo.js
 
 ---
 
+## 💻 SDK Usage
+
+Other developers can import `ExecutionEngineSDK` directly into their Node.js AI agent projects:
+
+```javascript
+const { ExecutionEngineSDK } = require("pharos-execution-engine");
+
+async function main() {
+    const rpcUrl = "https://atlantic.dplabs-internal.com";
+    const privateKey = "0x...";
+    const engineAddress = "0xe0C047cBCBDB0e4b5Ca5544faec06A1eED247014";
+
+    const sdk = new ExecutionEngineSDK(rpcUrl, privateKey, engineAddress);
+
+    // 1. Check target safety (blacklist & contract detection)
+    const { isContract, isBlacklisted } = await sdk.checkTargetSafety(targetAddress);
+    if (isBlacklisted) throw new Error("Malicious contract detected!");
+
+    // 2. Perform on-chain validations & TxPreview simulation
+    await sdk.validateOnChain(targetAddress, calldata, value);
+    await sdk.simulatePreview(targetAddress, calldata, value);
+
+    // 3. Execute transaction safely with fee optimizations
+    const receipt = await sdk.safeExecute(targetAddress, calldata, value);
+    console.log(`✅ Safe transaction confirmed in block ${receipt.blockNumber}`);
+}
+```
+
+---
+
 ## 🧪 Testing
 
 Solidity unit tests are written using Foundry Forge. Run them with:
