@@ -1,26 +1,27 @@
-# Pharos ExecutionEngine SuperSkill
+# Pharos Execution Shield
 
-A security-first, production-grade transaction execution middleware for AI agents operating on the Pharos Network. 
-
----
-
-## 🚀 Overview
-
-For on-chain AI Agents, executing transactions directly poses significant risks. Traditional LLM-driven agents suffer from critical vulnerabilities:
-1. **Phishing & Wallet Drains:** Interacting with malicious contracts supplied by unverified agent skills.
-2. **Infinite Token Approvals:** Exposing entire token balances to smart contract exploits.
-3. **High Slippage & Frontrunning:** Swapping tokens without pre-flight protection, getting sandwiched by MEV bots.
-4. **Stranded Funds:** Multi-transaction delays where one step succeeds but the next fails, causing partial state failures.
-5. **Dynamic Gas Spikes:** Stuck transactions in the mempool due to sudden EIP-1559 base fee surges.
-6. **Cryptic Reverts:** Receiving raw hex error data (e.g., `0x08c379a0...`) that LLM agents cannot parse to self-correct.
-
-The **Pharos Execution Shield (PES)** resolves these challenges by acting as a gateway middleware. It wraps transaction payloads and filters them through **6 Defensive Gates** before broadcasting them to the blockchain.
+Transaction execution gateway and security middleware for AI agents operating on the Pharos Network.
 
 ---
 
-## 🏗️ Architecture & Transaction Flow
+## Overview
 
-The sequence diagram below details the interaction between the AI Agent, the client SDK/MCP server, the on-chain gateway (`ExecutionEngine.sol`), and target smart contracts:
+Autonomous AI agents executing transactions directly on-chain face several runtime challenges. These include security vulnerabilities such as phishing or wallet-draining contracts, infinite token approval exploits, high slippage from MEV frontrunning, and transactional failures due to network congestion or unhandled smart contract reverts.
+
+Pharos Execution Shield (PES) addresses these issues by introducing an execution gateway that audits, simulates, and bundles transactions prior to on-chain propagation. The system coordinates six distinct security gates to protect agent wallets and guarantee transaction inclusion:
+
+1. **Registry Verification:** Intercepts calls and checks the target address against on-chain whitelist and blacklist registries before execution.
+2. **SafeApprove Control:** Audits ERC-20 allowances, automatically downscaling infinite approval requests to the exact amount required for the immediate transaction.
+3. **Simulation Preview (TxPreview):** Performs dry-run execution via local static calls to predict balance changes and verify execution status before paying gas.
+4. **Atomic Batching (BatchCompose):** Bundles sequential calls (such as approve, swap, and stake) into a single atomic transaction to prevent frontrunning and reduce gas overhead.
+5. **Dynamic Gas Oracle:** Queries EIP-1559 fee parameters in real time and calculates optimal base and priority fees with a safety buffer.
+6. **Error Diagnosis (RevertDiagnose):** Decodes raw revert hex data into clear, structured error reports so that autonomous agents can self-correct (e.g., automatically adjusting slippage thresholds).
+
+---
+
+## Architecture and Transaction Flow
+
+The sequence diagram below illustrates the lifecycle of a transaction as it passes through the client SDK/MCP server, the on-chain gateway, and the target smart contracts:
 
 ```mermaid
 sequenceDiagram
@@ -72,20 +73,20 @@ sequenceDiagram
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```text
 pharos-skill-engine/
-├── assets/                    # Static assets (logos, media)
+├── assets/                    # Static assets
 │   └── pharos_shield_logo.png # Transparent logo image
 ├── bin/                       # Executable binaries
 │   ├── cli.js                 # Command Line Interface (CLI) tool
 │   └── mcp-server.js          # Model Context Protocol (MCP) server
-├── broadcast/                 # Foundry deploy logs
+├── broadcast/                 # Foundry deployment logs
 ├── css/                       # Frontend styles
 │   └── style.css              # Cyberpunk Glassmorphism stylesheet
 ├── docs/                      # Project documentation and specifications
-│   └── superpowers/           # SuperSkill designs and plans
+│   └── superpowers/           # Skill designs and plans
 ├── js/                        # Frontend application scripts
 │   └── app.js                 # Web3 and Mock mode sandbox logic
 ├── lib/                       # Smart contract dependencies (Forge-std)
@@ -113,9 +114,9 @@ pharos-skill-engine/
 
 ---
 
-## 🌐 Pharos Network Configuration
+## Network Configuration
 
-PES is deployed and verified on the Pharos Atlantic Testnet. Below is the configuration metadata required to interface with the network:
+The core gateway contracts are deployed and verified on the Pharos Atlantic Testnet.
 
 ### Network Metadata
 | Parameter | Value |
@@ -126,24 +127,24 @@ PES is deployed and verified on the Pharos Atlantic Testnet. Below is the config
 | **Currency Symbol** | `ETH` |
 | **Block Explorer** | `https://atlantic.pharosscan.xyz` |
 
-### Deployed Contract Addresses (Verified)
+### Deployed Contract Addresses
 *   **`ProtocolRegistry`**: `0x8d87E6b80218a71be0D3DaB452020267c69BC937`
 *   **`SlippageGuard`**: `0x0b72Ed35d27a77a8C1CD32E0eDB7D7326A460243`
 *   **`ExecutionEngine Core`**: `0xe0C047cBCBDB0e4b5Ca5544faec06A1eED247014`
-*   **`MockTarget (Test Contract)`**: `0x2c692A2291ad46D034bAbF4a5ACF287341B7797a`
+*   **`MockTarget`**: `0x2c692A2291ad46D034bAbF4a5ACF287341B7797a`
 
-*To switch to **Pharos Mainnet**, replace the RPC URL and deployed addresses in your environment variables config (refer to the Setup section below).*
+To target the Pharos Mainnet, update the RPC URL and the deployed contract addresses in the environment variables configuration.
 
 ---
 
-## 📦 Installation & Setup
+## Installation and Setup
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v18+)
-- [Foundry](https://book.getfoundry.sh/getting-started/installation) (for compiling/testing Solidity contracts)
+- Node.js (v18+)
+- Foundry (for compiling and testing Solidity smart contracts)
 
-### Setup & Installation
-Clone the repository and install all dependencies:
+### Setup
+Clone the repository and install the required dependencies:
 ```bash
 git clone https://github.com/PharosNetwork/pharos-skill-engine.git
 cd pharos-skill-engine
@@ -154,7 +155,8 @@ Initialize local variables and compile contracts:
 ```bash
 node scripts/init.js
 ```
-This generates a `.env.local` file. Edit `.env.local` to configure your parameters:
+
+Configure the generated `.env.local` file with your private key and network endpoints:
 ```env
 PHAROS_DEPLOYER_PRIVATE_KEY=0x_your_private_key
 EXECUTION_ENGINE_CORE_ADDRESS=0xe0C047cBCBDB0e4b5Ca5544faec06A1eED247014
@@ -163,10 +165,10 @@ PHAROS_RPC_URL=https://atlantic.dplabs-internal.com
 
 ---
 
-## 💻 Integration Suite
+## Integration Suite
 
-### 1. SDK Integration (For Node.js AI Agents)
-Import `ExecutionEngineSDK` to wrap agent transaction payloads:
+### 1. SDK Integration
+Import the SDK directly into your autonomous agent application:
 ```javascript
 const { ExecutionEngineSDK } = require("pharos-execution-engine");
 
@@ -184,32 +186,29 @@ async function executeSwap(target, calldata, value) {
   // Preview local simulation
   await sdk.simulatePreview(target, calldata, value);
 
-  // Broadcast securely
+  // Broadcast transaction
   const receipt = await sdk.safeExecute(target, calldata, value);
-  console.log(`✅ Transaction executed successfully in block: ${receipt.blockNumber}`);
+  console.log(`Transaction executed successfully in block: ${receipt.blockNumber}`);
 }
 ```
 
-### 2. CLI Usage
-We provide a CLI helper utility for executing audits and quick transactions:
+### 2. Command Line Interface (CLI)
+Use the command line utility to execute manual audits and transactions:
 ```bash
 # Verify target safety status
 node bin/cli.js safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a
 
-# Run a secure execute transaction
+# Run a secure transaction
 node bin/cli.js safe-execute 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a 0x 0
 ```
 
 ### 3. Model Context Protocol (MCP) Server Setup
-Integrate transaction safety directly into your AI Agent clients (e.g. Claude Desktop). 
-
-Start the server locally:
+Start the server process:
 ```bash
 node bin/mcp-server.js
 ```
 
-#### Claude Desktop Configuration
-Add the following to your `claude_desktop_config.json` configuration file:
+Configure your LLM client (e.g. Claude Desktop) by adding the following to your `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
@@ -225,34 +224,32 @@ Add the following to your `claude_desktop_config.json` configuration file:
   }
 }
 ```
-*Make sure to specify the absolute path to `mcp-server.js` in the `args` parameter.*
 
 ---
 
-## 🛠️ Demo, Test & Deploy Commands
+## Development and Deployment Commands
 
 ### Run Smart Contract Tests
-Solidty unit tests are written with Forge. Run the suite locally:
+Solidity unit tests are written with Foundry Forge. Run the test suite:
 ```bash
 forge test -v
 ```
 
 ### Deploy Smart Contracts
-To compile and deploy the core contracts onto the Pharos Network:
+To compile and deploy the core contracts to the Pharos Network:
 ```bash
-# Deploy to Pharos Testnet (Atlantic)
 forge script script/Deploy.s.sol --rpc-url https://atlantic.dplabs-internal.com --broadcast --verify -vvvv
 ```
 
-### Run Node.js Demo Verification Script
-Runs an automated script wrapping scenarios like phishing, infinite approve, and execution simulation:
+### Run Node.js Demo Script
+Runs an automated script to verify scenarios (phishing, infinite approve, and execution simulation) on the CLI:
 ```bash
 node scripts/demo.js
 ```
 
-### Run local Sandbox Web App
-Start a local development server to test the Interactive Web Sandbox Dashboard:
+### Run Web Sandbox Dashboard
+Start a local web server to test the Interactive Web Sandbox Dashboard:
 ```bash
 npm run demo-web
 ```
-Access the dashboard locally at `http://localhost:8080`.
+The dashboard is accessible locally at `http://localhost:8080`.
