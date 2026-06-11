@@ -164,7 +164,8 @@ pharos-skill-engine/
 ├── css/                       # Frontend styles
 │   └── style.css              # Cyberpunk Glassmorphism stylesheet
 ├── docs/                      # Project documentation and specifications
-│   └── superpowers/           # Skill designs and plans
+│   ├── plans/                 # Architectural implementation plans
+│   └── specs/                 # Technical design specifications
 ├── js/                        # Frontend application scripts
 │   └── app.js                 # Web3 and Mock mode sandbox logic
 ├── lib/                       # Smart contract dependencies (Forge-std)
