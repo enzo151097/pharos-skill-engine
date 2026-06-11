@@ -10,8 +10,8 @@ const puppeteer = require('puppeteer');
 
   const page = await browser.newPage();
   
-  // Navigate to local http-server
-  await page.goto('http://127.0.0.1:8081');
+  // Navigate to live Vercel deployment
+  await page.goto('https://pharos-skill-engine.vercel.app');
   
   // Wait for the user to start screen recording
   console.log('Waiting 4 seconds for user to start screen recording...');
