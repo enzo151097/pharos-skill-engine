@@ -122,6 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sandboxValue) sandboxValue.value = value;
 
       writeLog(`Loaded sample ${name} into sandbox.`, 'info');
+      
+      // Auto-trigger security scan for enhanced UX
+      verifyAndSimulate();
     }
   });
 
@@ -140,10 +143,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUI();
   }
 
-  function showHome() {
+  function showHome(noScroll = false) {
     if (demoPage) demoPage.classList.add('hidden');
     if (landingPage) landingPage.classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!noScroll) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   // Bind Start Demo buttons
@@ -175,13 +180,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const hash = link.getAttribute('href');
       if (hash && hash.startsWith('#') && hash !== '#') {
         e.preventDefault();
-        showHome();
+        const isCurrentlyDemo = !demoPage.classList.contains('hidden');
+        showHome(isCurrentlyDemo);
+        
         setTimeout(() => {
           const targetEl = document.querySelector(hash);
           if (targetEl) {
             targetEl.scrollIntoView({ behavior: 'smooth' });
           }
-        }, 100);
+        }, isCurrentlyDemo ? 150 : 0);
       }
     });
   });
