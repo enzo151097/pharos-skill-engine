@@ -7,6 +7,9 @@
     "pharos-cli": "./bin/cli.js",
     "pharos-mcp": "./bin/mcp-server.js"
   },
+  "scripts": {
+    "demo-web": "npx http-server ./"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.6.0",
     "dotenv": "^17.4.2",
