@@ -14,8 +14,8 @@ const puppeteer = require('puppeteer');
   await page.goto('https://pharos-skill-engine.vercel.app');
   
   // Wait for the user to start screen recording
-  console.log('Waiting 4 seconds for user to start screen recording...');
-  await new Promise(r => setTimeout(r, 4000));
+  console.log('Waiting 15 seconds for user to start screen recording...');
+  await new Promise(r => setTimeout(r, 15000));
 
   // 1. Scroll down to Interactive Flow section
   console.log('Scrolling to Interactive Flow section...');
