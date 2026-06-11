@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pharos ExecutionEngine Shield is a Web3 security dashboard providing transaction simulation, blacklist verification, and slippage protection for AI Agents on Pharos Chain.">
+    <title>Pharos ExecutionEngine Shield</title>
+    
+    <!-- Google Fonts: Outfit (for UI elements) and Fira Code (for terminal output) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styling stylesheet (Vanilla CSS with rich aesthetics) -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Ethers.js v6 CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.0/ethers.umd.min.js"></script>
+    
+    <!-- App Logic Script -->
+    <script defer src="js/app.js"></script>
+</head>
+<body>
+    <!-- Header Component -->
+    <header class="app-header" id="app-header">
+        <div class="header-brand">
+            <h1 id="app-title">Pharos ExecutionEngine Shield</h1>
+            <span class="badge badge-network">Pharos Atlantic</span>
+        </div>
+        
+        <div class="header-controls">
+            <!-- Mock Mode Toggle Switch -->
+            <div class="mock-mode-container">
+                <span class="toggle-label" id="mock-mode-label">Mock Mode</span>
+                <label class="switch" for="mock-mode-toggle">
+                    <input type="checkbox" id="mock-mode-toggle" aria-labelledby="mock-mode-label">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            
+            <!-- Wallet Status Indicator -->
+            <div class="wallet-status-indicator" id="wallet-status-indicator">
+                <span id="wallet-status-dot" class="status-dot disconnected" aria-label="Wallet Status: Disconnected"></span>
+                <span id="wallet-account" class="account-text">Disconnected</span>
+            </div>
+            
+            <!-- Connect Button -->
+            <button id="btn-connect-wallet" class="btn btn-connect">Connect Wallet</button>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Grid Container -->
+    <main class="dashboard-grid" id="dashboard-grid">
+        
+        <!-- Card 1: Safe Sandbox -->
+        <section class="card card-sandbox" id="card-sandbox" aria-labelledby="sandbox-title">
+            <div class="card-header">
+                <h2 id="sandbox-title" class="card-title">Safe Sandbox</h2>
+                <span class="card-subtitle">Verify, simulate, and execute transactions safely.</span>
+            </div>
+            
+            <form id="sandbox-form" class="sandbox-form" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label for="sandbox-target">Target Address</label>
+                    <input type="text" id="sandbox-target" class="form-control" placeholder="0x..." required pattern="^0x[a-fA-F0-9]{40}$" title="Enter a valid 40-character Ethereum address (0x...)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sandbox-calldata">Calldata (Hex)</label>
+                    <input type="text" id="sandbox-calldata" class="form-control font-mono" placeholder="0x" value="0x" required pattern="^0x[a-fA-F0-9]*$" title="Enter hex data starting with 0x">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sandbox-value">Value (ETH)</label>
+                    <input type="number" id="sandbox-value" class="form-control" placeholder="0" value="0" step="any" min="0" required>
+                </div>
+                
+                <div class="sandbox-actions">
+                    <button type="button" id="btn-verify-simulate" class="btn btn-secondary" disabled>Verify & Simulate</button>
+                    <button type="button" id="btn-safe-execute" class="btn btn-primary" disabled>Safe Execute</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Card 2: Protocol Registry & Monitor -->
+        <section class="card card-registry" id="card-registry" aria-labelledby="registry-title">
+            <div class="card-header">
+                <h2 id="registry-title" class="card-title">Protocol Registry & Monitor</h2>
+                <span class="card-subtitle">On-chain whitelist and blacklist administration.</span>
+            </div>
+            
+            <!-- Address Check Input -->
+            <div class="registry-search-container">
+                <div class="form-group inline-group">
+                    <label for="registry-search-address" class="sr-only">Search Address</label>
+                    <input type="text" id="registry-search-address" class="form-control" placeholder="Search Address (0x...)" pattern="^0x[a-fA-F0-9]{40}$" title="Enter a valid Ethereum address">
+                    <button type="button" id="btn-registry-check" class="btn btn-secondary">Check</button>
+                </div>
+            </div>
+            
+            <!-- Admin Controls (Owner Only) -->
+            <div class="admin-controls-section" id="admin-controls-section">
+                <h3 class="section-title">Admin Controls <span class="badge badge-owner">Owner Only</span></h3>
+                <div class="admin-actions">
+                    <button type="button" id="btn-admin-whitelist" class="btn btn-success" disabled>Whitelist</button>
+                    <button type="button" id="btn-admin-blacklist" class="btn btn-danger" disabled>Blacklist</button>
+                </div>
+            </div>
+            
+            <!-- Quick-load sample address list -->
+            <div class="sample-addresses-section" id="sample-addresses-section">
+                <h3 class="section-title">Quick-Load Test Addresses</h3>
+                <div class="table-container">
+                    <table class="sample-table" id="sample-table">
+                        <thead>
+                            <tr>
+                                <th>Name / Address</th>
+                                <th>Status</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Sample: MockTarget -->
+                            <tr class="sample-row">
+                                <td>
+                                    <div class="sample-name">MockTarget (Test Contract)</div>
+                                    <div class="sample-address font-mono">0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</div>
+                                </td>
+                                <td><span class="badge status-verified">Verified</span></td>
+                                <td class="text-right">
+                                    <button type="button" class="btn btn-sm btn-load-sample" 
+                                            data-name="MockTarget"
+                                            data-address="0x2c692A2291ad46D034bAbF4a5ACF287341B7797a"
+                                            data-calldata="0x"
+                                            data-value="0">Load to Sandbox</button>
+                                </td>
+                            </tr>
+                            <!-- Sample: Uniswap Router -->
+                            <tr class="sample-row">
+                                <td>
+                                    <div class="sample-name">Uniswap V2 Router</div>
+                                    <div class="sample-address font-mono">0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D</div>
+                                </td>
+                                <td><span class="badge status-whitelisted">Whitelisted</span></td>
+                                <td class="text-right">
+                                    <button type="button" class="btn btn-sm btn-load-sample" 
+                                            data-name="Uniswap V2 Router"
+                                            data-address="0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+                                            data-calldata="0x"
+                                            data-value="0">Load to Sandbox</button>
+                                </td>
+                            </tr>
+                            <!-- Sample: Malicious Target -->
+                            <tr class="sample-row">
+                                <td>
+                                    <div class="sample-name">Malicious Target (Phishing)</div>
+                                    <div class="sample-address font-mono">0x1111111254fb6c44bac0bed2854e76f90643097d</div>
+                                </td>
+                                <td><span class="badge status-blacklisted">Blacklisted</span></td>
+                                <td class="text-right">
+                                    <button type="button" class="btn btn-sm btn-load-sample" 
+                                            data-name="Malicious Target"
+                                            data-address="0x1111111254fb6c44bac0bed2854e76f90643097d"
+                                            data-calldata="0x"
+                                            data-value="0">Load to Sandbox</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Card 3: Terminal Console Widget -->
+        <section class="card card-terminal" id="card-terminal" aria-labelledby="terminal-title">
+            <div class="terminal-header">
+                <h2 id="terminal-title" class="terminal-title">SYSTEM OUTPUT CONSOLE</h2>
+                <button type="button" id="btn-clear-terminal" class="btn btn-clear">Clear</button>
+            </div>
+            <div class="terminal">
+                <div id="terminal-output" class="terminal-output" role="log" aria-live="polite">
+                    <div class="terminal-line system-msg">Pharos ExecutionEngine Shield Console initialized. Ready.</div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- Footer Component -->
+    <footer class="app-footer" id="app-footer">
+        <p>&copy; 2026 Pharos Network. Secured by ExecutionEngine Gateway.</p>
+    </footer>
+</body>
+</html>
