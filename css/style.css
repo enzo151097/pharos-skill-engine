@@ -1057,6 +1057,14 @@ input:checked + .slider:before {
     box-shadow: var(--neon-shadow);
 }
 
+.brand-logo {
+    height: 38px;
+    width: 38px;
+    border-radius: 8px;
+    box-shadow: var(--neon-shadow);
+    object-fit: contain;
+}
+
 .brand strong {
     display: block;
     font-size: 16px;
