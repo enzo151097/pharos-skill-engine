@@ -98,6 +98,92 @@ async function main() {
 
 ---
 
+## 🖥️ CLI Tool
+
+The ExecutionEngine SuperSkill provides a CLI tool for direct interaction and initialization. You can run commands using either:
+```bash
+node bin/cli.js <command> [options]
+# or (if installed globally or via npx)
+npx pharos-cli <command> [options]
+```
+
+### Commands
+
+1. **`init`**
+   Initialize the Pharos project, install dependencies, copy environment templates, and compile contracts.
+   ```bash
+   node bin/cli.js init
+   ```
+
+2. **`safety-check <target>`**
+   Checks safety of a target contract address (whether it is a contract and if it is blacklisted).
+   ```bash
+   node bin/cli.js safety-check <target-address> --rpc-url <url> --private-key <key> --engine-address <address>
+   ```
+
+3. **`safe-execute <target> [data] [value]`**
+   Executes a transaction safely through the SDK, specifying the target, calldata (`data`), and transaction `value` (in Ether).
+   ```bash
+   node bin/cli.js safe-execute <target-address> 0x... 0.1 --rpc-url <url> --private-key <key> --engine-address <address>
+   ```
+
+4. **`mcp-start`**
+   Starts the MCP Server on stdio.
+   ```bash
+   node bin/cli.js mcp-start
+   ```
+
+*Note: You can omit `--rpc-url`, `--private-key`, and `--engine-address` flags if the corresponding environment variables (`PHAROS_ATLANTIC_RPC_URL` or `RPC_URL`, `PHAROS_DEPLOYER_PRIVATE_KEY` or `PRIVATE_KEY`, and `EXECUTION_ENGINE_CORE_ADDRESS` or `ENGINE_ADDRESS`) are defined in your environment or a `.env.local` file.*
+
+---
+
+## 🔌 Model Context Protocol (MCP) Server
+
+Pharos exposes its ExecutionEngine capabilities as a Model Context Protocol (MCP) server, allowing LLM clients (like Claude Desktop) to invoke transaction safety operations directly.
+
+### Running the MCP Server
+You can run the MCP server using:
+```bash
+node bin/mcp-server.js
+# or
+npx pharos-mcp
+```
+
+### Exposed MCP Tools
+
+The server exposes 4 tools:
+1. **`check_target_safety`**: Checks if target EVM address is a contract and not blacklisted.
+   - Arguments: `target` (string, required)
+2. **`simulate_preview`**: Simulates the transaction locally (static call) before broadcasting.
+   - Arguments: `target` (string, required), `data` (string, hex, default '0x'), `value` (string, ether, default '0')
+3. **`safe_execute`**: Runs the full safeExecute flow, verifying safety, validating on-chain, simulating locally, optimizing gas, and executing.
+   - Arguments: `target` (string, required), `data` (string, hex, default '0x'), `value` (string, ether, default '0'), `options` (object, e.g., `{ gasLimit: "..." }`)
+4. **`get_gas_fees`**: Fetches EIP-1559 base fee and priority fee optimizations from the Pharos network.
+
+### Claude Desktop Integration Configuration
+To integrate the Pharos MCP server with Claude Desktop, add the following to your `claude_desktop_config.json` file (typically located at `%APPDATA%\Claude\claude_desktop_config.json` on Windows or `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+
+```json
+{
+  "mcpServers": {
+    "pharos-mcp": {
+      "command": "node",
+      "args": [
+        "d:/dorahack/pharos/bin/mcp-server.js"
+      ],
+      "env": {
+        "rpcUrl": "https://atlantic.dplabs-internal.com",
+        "privateKey": "your_private_key_here",
+        "engineAddress": "0xe0C047cBCBDB0e4b5Ca5544faec06A1eED247014"
+      }
+    }
+  }
+}
+```
+*Note: Make sure to replace `d:/dorahack/pharos/bin/mcp-server.js` with the correct absolute path to the MCP server file, and configure the correct `rpcUrl`, `privateKey`, and `engineAddress` in the `env` block.*
+
+---
+
 ## 🧪 Testing
 
 Solidity unit tests are written using Foundry Forge. Run them with:
