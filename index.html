@@ -69,6 +69,68 @@
             </div>
         </section>
 
+        <!-- Interactive Transaction Flow Diagram -->
+        <section id="interactive-flow" class="content-band interactive-flow-section">
+            <div class="band-header text-center">
+                <h2>On-Chain Execution Shield Pipeline</h2>
+                <p>Click on any defensive gate below to see how Pharos protects transactions in real-time.</p>
+            </div>
+            
+            <div class="interactive-pipeline-wrapper">
+                <div class="interactive-pipeline">
+                    <div class="pipeline-connector-line"></div>
+                    <div class="flow-step active" data-gate="registry">
+                        <div class="flow-step-circle"><i class="fas fa-list-check"></i></div>
+                        <span class="flow-step-name">1. Registry</span>
+                    </div>
+                    <div class="flow-step" data-gate="approve">
+                        <div class="flow-step-circle"><i class="fas fa-shield-halved"></i></div>
+                        <span class="flow-step-name">2. Approve</span>
+                    </div>
+                    <div class="flow-step" data-gate="preview">
+                        <div class="flow-step-circle"><i class="fas fa-binoculars"></i></div>
+                        <span class="flow-step-name">3. Preview</span>
+                    </div>
+                    <div class="flow-step" data-gate="batch">
+                        <div class="flow-step-circle"><i class="fas fa-cubes"></i></div>
+                        <span class="flow-step-name">4. Batch</span>
+                    </div>
+                    <div class="flow-step" data-gate="oracle">
+                        <div class="flow-step-circle"><i class="fas fa-gauge-high"></i></div>
+                        <span class="flow-step-name">5. Oracle</span>
+                    </div>
+                    <div class="flow-step" data-gate="diagnose">
+                        <div class="flow-step-circle"><i class="fas fa-stethoscope"></i></div>
+                        <span class="flow-step-name">6. Diagnose</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Detail Presentation Box -->
+            <div class="flow-detail-container">
+                <div class="flow-detail-card" id="flow-detail-card">
+                    <div class="detail-header">
+                        <div class="detail-icon" id="detail-gate-icon"><i class="fas fa-list-check"></i></div>
+                        <h3 id="detail-gate-title">ProtocolRegistry Gate (Cổng Kiểm Duyệt Giao Thức)</h3>
+                    </div>
+                    <div class="detail-body">
+                        <div class="detail-block block-problem">
+                            <span class="block-label"><i class="fas fa-triangle-exclamation"></i> Rủi ro lớn nhất (Vulnerability)</span>
+                            <p id="detail-problem-text">AI Agent gửi tài sản vào các địa chỉ hợp đồng giả mạo, ví phishing hoặc ví drainer không được kiểm định, dẫn tới nguy cơ mất trắng toàn bộ tài sản trong ví.</p>
+                        </div>
+                        <div class="detail-block block-strength">
+                            <span class="block-label"><i class="fas fa-shield-halved"></i> Sức mạnh của Cổng (PES Strength)</span>
+                            <p id="detail-strength-text">Kiểm tra động trạng thái Whitelist/Blacklist của địa chỉ đích trước khi thực hiện giao dịch thông qua ProtocolRegistry.sol trên chuỗi Pharos. Chặn đứng giao dịch ngay tại cổng số 1 nếu phát hiện dấu hiệu lừa đảo.</p>
+                        </div>
+                    </div>
+                    <div class="detail-footer">
+                        <span>On-Chain Component:</span>
+                        <code id="detail-gate-contract" class="font-mono">ProtocolRegistry (0x8d87E6b80218a71be0D3DaB452020267c69BC937)</code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Before vs After Section (Why AI Agents Need a Shield) -->
         <section id="why-shield" class="content-band fade-in-section">
             <div class="band-header text-center">
@@ -141,29 +203,51 @@
         <!-- Defensive Gates Grid -->
         <section id="solution" class="content-band fade-in-section">
             <div class="band-header text-center">
-                <h2>The 4 Defensive Gateways</h2>
-                <p>Every agent interaction is audited through sequential verification gates before broadcasting.</p>
+                <h2>The 6 Core Execution Gates</h2>
+                <p>Every agent transaction is filtered through 6 specialized cryptographic gateways to ensure 100% safety and execution success.</p>
             </div>
             <div class="point-grid gates-grid">
                 <article class="point-card gate-card">
                     <div class="gate-icon"><i class="fas fa-list-check"></i></div>
-                    <strong>1. Registry Verification</strong>
-                    <span>Queries the on-chain <code>ProtocolRegistry</code>. Blocks blacklisted contracts and flags unregistered endpoints dynamically.</span>
+                    <strong class="gate-name">1. Registry Verification</strong>
+                    <div class="gate-problem"><strong>Vấn đề:</strong> Wallet drains & phishing contracts.</div>
+                    <div class="gate-strength"><strong>Sức mạnh:</strong> Chặn đứng lập tức các giao dịch gửi tiền tới ví lừa đảo.</div>
+                    <code class="gate-contract font-mono">ProtocolRegistry.sol</code>
                 </article>
                 <article class="point-card gate-card">
-                    <div class="gate-icon"><i class="fas fa-bolt"></i></div>
-                    <strong>2. Simulation Preview</strong>
-                    <span>Performs dry-run execution via local static calls. Catches transaction reverts and state exceptions before wasting gas.</span>
+                    <div class="gate-icon"><i class="fas fa-shield-halved"></i></div>
+                    <strong class="gate-name">2. SafeApprove Control</strong>
+                    <div class="gate-problem"><strong>Vấn đề:</strong> Infinite ERC20 approvals vulnerability.</div>
+                    <div class="gate-strength"><strong>Sức mạnh:</strong> Giới hạn quyền duyệt ví về mức tối thiểu cho từng giao dịch.</div>
+                    <code class="gate-contract font-mono">SafeApprove SDK logic</code>
                 </article>
                 <article class="point-card gate-card">
-                    <div class="gate-icon"><i class="fas fa-shield"></i></div>
-                    <strong>3. Slippage Protection</strong>
-                    <span>Interfaces with <code>SlippageGuard</code> to restrict value-slippage deviations within developer-specified tolerances.</span>
+                    <div class="gate-icon"><i class="fas fa-binoculars"></i></div>
+                    <strong class="gate-name">3. Simulation Preview (TxPreview)</strong>
+                    <div class="gate-problem"><strong>Vấn đề:</strong> High gas fee waste on failed reverts.</div>
+                    <div class="gate-strength"><strong>Sức mạnh:</strong> Chạy thử trước (dry-run) và dự đoán thay đổi tài sản 100% chính xác.</div>
+                    <code class="gate-contract font-mono">ExecutionEngine.checkTx</code>
                 </article>
                 <article class="point-card gate-card">
-                    <div class="gate-icon"><i class="fas fa-gas-pump"></i></div>
-                    <strong>4. Gas Fee Optimizer</strong>
-                    <span>Estimates EIP-1559 base and priority fees with a 20% limit safety margin to guarantee execution under network congestion.</span>
+                    <div class="gate-icon"><i class="fas fa-cubes"></i></div>
+                    <strong class="gate-name">4. Atomic Batching (BatchCompose)</strong>
+                    <div class="gate-problem"><strong>Vấn đề:</strong> Multi-tx delay & MEV frontrun.</div>
+                    <div class="gate-strength"><strong>Sức mạnh:</strong> Gộp "Approve + Swap + Stake" thành 1 tx nguyên tử duy nhất.</div>
+                    <code class="gate-contract font-mono">ExecutionEngine.executeTx</code>
+                </article>
+                <article class="point-card gate-card">
+                    <div class="gate-icon"><i class="fas fa-gauge-high"></i></div>
+                    <strong class="gate-name">5. Dynamic Gas Oracle</strong>
+                    <div class="gate-problem"><strong>Vấn đề:</strong> Stuck transactions due to network spikes.</div>
+                    <div class="gate-strength"><strong>Sức mạnh:</strong> Ước lượng phí EIP-1559 tối ưu cộng 20% margin chống nghẽn.</div>
+                    <code class="gate-contract font-mono">GasOracle Service</code>
+                </article>
+                <article class="point-card gate-card">
+                    <div class="gate-icon"><i class="fas fa-stethoscope"></i></div>
+                    <strong class="gate-name">6. Error Diagnosis (RevertDiagnose)</strong>
+                    <div class="gate-problem"><strong>Vấn đề:</strong> Cryptic revert hex data cannot be read by LLM.</div>
+                    <div class="gate-strength"><strong>Sức mạnh:</strong> Dịch hex lỗi sang tiếng Việt đề xuất Agent tự động tăng slippage.</div>
+                    <code class="gate-contract font-mono">RevertDiagnose decrypter</code>
                 </article>
             </div>
         </section>
@@ -317,6 +401,19 @@ pharos-cli safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</code></pre>
                 
                 <form id="sandbox-form" class="sandbox-form" onsubmit="event.preventDefault();">
                     <div class="form-group">
+                        <label for="sandbox-scenario">Interactive Safety Scenario Preset</label>
+                        <select id="sandbox-scenario" class="form-control">
+                            <option value="custom" selected>-- Custom Entry / Manual Input --</option>
+                            <option value="phishing">Kịch bản 1: Registry Gate - Phát hiện & Chặn địa chỉ Phishing giả mạo</option>
+                            <option value="approve">Kịch bản 2: SafeApprove Gate - Chặn lệnh approve Token vô hạn (Infinite Approve)</option>
+                            <option value="preview">Kịch bản 3: TxPreview Gate - Giả lập Dry-Run giao dịch an toàn</option>
+                            <option value="batch">Kịch bản 4: BatchCompose Gate - Gộp giao dịch nguyên tử (Swap & Stake)</option>
+                            <option value="oracle">Kịch bản 5: GasOracle Gate - Vượt nghẽn gas mạng với Dynamic Gas EIP-1559</option>
+                            <option value="diagnose">Kịch bản 6: RevertDiagnose Gate - Chẩn đoán lỗi trượt giá Swap DEX thất bại</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="sandbox-target">Target Address</label>
                         <input type="text" id="sandbox-target" class="form-control" placeholder="0x..." required pattern="^0x[a-fA-F0-9]{40}$" title="Enter a valid 40-character Ethereum address (0x...)">
                     </div>
@@ -337,7 +434,7 @@ pharos-cli safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</code></pre>
                     </div>
                 </form>
                 
-                <!-- Visual Scanner Pipeline -->
+                <!-- Visual 6-Step Scanner Pipeline -->
                 <div class="scanner-container" id="scanner-container">
                     <div class="shield-display">
                         <div class="shield-glow" id="shield-glow"></div>
@@ -346,21 +443,29 @@ pharos-cli safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</code></pre>
                     </div>
                     <div class="pipeline-steps">
                         <div class="step-connector"></div>
-                        <div class="step" id="step-audit">
-                            <div class="step-dot"><i class="fas fa-magnifying-glass"></i></div>
-                            <span class="step-label">Audit</span>
-                        </div>
-                        <div class="step" id="step-blacklist">
+                        <div class="step" id="step-registry">
                             <div class="step-dot"><i class="fas fa-list-check"></i></div>
                             <span class="step-label">Registry</span>
                         </div>
+                        <div class="step" id="step-approve">
+                            <div class="step-dot"><i class="fas fa-shield-halved"></i></div>
+                            <span class="step-label">Approve</span>
+                        </div>
                         <div class="step" id="step-preview">
-                            <div class="step-dot"><i class="fas fa-bolt"></i></div>
+                            <div class="step-dot"><i class="fas fa-binoculars"></i></div>
                             <span class="step-label">Preview</span>
                         </div>
-                        <div class="step" id="step-guard">
-                            <div class="step-dot"><i class="fas fa-gas-pump"></i></div>
-                            <span class="step-label">Fees</span>
+                        <div class="step" id="step-batch">
+                            <div class="step-dot"><i class="fas fa-cubes"></i></div>
+                            <span class="step-label">Batch</span>
+                        </div>
+                        <div class="step" id="step-oracle">
+                            <div class="step-dot"><i class="fas fa-gauge-high"></i></div>
+                            <span class="step-label">Oracle</span>
+                        </div>
+                        <div class="step" id="step-diagnose">
+                            <div class="step-dot"><i class="fas fa-stethoscope"></i></div>
+                            <span class="step-label">Diagnose</span>
                         </div>
                     </div>
                 </div>
