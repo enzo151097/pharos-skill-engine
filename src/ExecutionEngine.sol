@@ -33,7 +33,7 @@ contract ExecutionEngine is Ownable {
     function checkTx(
         address target,
         bytes calldata data,
-        uint256 value
+        uint256 /* value */
     ) external view returns (bool) {
         registry.checkAddress(target);
         slippageGuard.verifySlippage(target, data, defaultMaxSlippageBps);

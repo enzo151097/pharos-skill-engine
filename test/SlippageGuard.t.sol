@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import "../src/SlippageGuard.sol";
 
 contract MockRouter {
-    function getAmountsOut(uint256 amountIn, address[] calldata path) external pure returns (uint[] memory amounts) {
+    function getAmountsOut(uint256 amountIn, address[] calldata /* path */) external pure returns (uint[] memory amounts) {
         amounts = new uint[](2);
         amounts[0] = amountIn;
         amounts[1] = amountIn * 2; // Fixed exchange rate of 2
