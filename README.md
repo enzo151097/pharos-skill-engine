@@ -1,27 +1,105 @@
 # Pharos Execution Shield
 
-Transaction execution gateway and security middleware for AI agents operating on the Pharos Network.
+Transaction execution gateway and security middleware for autonomous AI agents operating on the Pharos Network.
 
 ---
 
 ## Overview
 
-Autonomous AI agents executing transactions directly on-chain face several runtime challenges. These include security vulnerabilities such as phishing or wallet-draining contracts, infinite token approval exploits, high slippage from MEV frontrunning, and transactional failures due to network congestion or unhandled smart contract reverts.
+Autonomous AI agents executing transactions directly on-chain face severe security and operational challenges. Traditional LLM-driven execution models suffer from vulnerabilities:
+1. **Phishing & Wallet Drains:** Interacting with malicious contracts supplied by unverified skills.
+2. **Infinite Token Approvals:** Exposing entire token balances to smart contract exploits.
+3. **High Slippage & Frontrunning:** Swapping tokens without pre-flight protection, getting sandwiched by MEV bots.
+4. **Stranded Funds:** Multi-transaction delays where one step succeeds but the next fails, causing partial state failures.
+5. **Dynamic Gas Spikes:** Stuck transactions in the mempool due to sudden EIP-1559 base fee surges.
+6. **Cryptic Reverts:** Receiving raw hex error data (e.g., `0x08c379a0...`) that LLM agents cannot parse to self-correct.
 
 Pharos Execution Shield (PES) addresses these issues by introducing an execution gateway that audits, simulates, and bundles transactions prior to on-chain propagation. The system coordinates six distinct security gates to protect agent wallets and guarantee transaction inclusion:
 
-1. **Registry Verification:** Intercepts calls and checks the target address against on-chain whitelist and blacklist registries before execution.
-2. **SafeApprove Control:** Audits ERC-20 allowances, automatically downscaling infinite approval requests to the exact amount required for the immediate transaction.
-3. **Simulation Preview (TxPreview):** Performs dry-run execution via local static calls to predict balance changes and verify execution status before paying gas.
-4. **Atomic Batching (BatchCompose):** Bundles sequential calls (such as approve, swap, and stake) into a single atomic transaction to prevent frontrunning and reduce gas overhead.
-5. **Dynamic Gas Oracle:** Queries EIP-1559 fee parameters in real time and calculates optimal base and priority fees with a safety buffer.
-6. **Error Diagnosis (RevertDiagnose):** Decodes raw revert hex data into clear, structured error reports so that autonomous agents can self-correct (e.g., automatically adjusting slippage thresholds).
+*   **Gate 1: Registry Verification:** Intercepts calls and checks the target address against on-chain whitelist and blacklist registries before execution.
+*   **Gate 2: SafeApprove Control:** Audits ERC-20 allowances, automatically downscaling infinite approval requests to the exact amount required for the immediate transaction.
+*   **Gate 3: Simulation Preview (TxPreview):** Performs dry-run execution via local static calls to predict balance changes and verify execution status before paying gas.
+*   **Gate 4: Atomic Batching (BatchCompose):** Bundles sequential calls (such as approve, swap, and stake) into a single atomic transaction to prevent frontrunning and reduce gas overhead.
+*   **Gate 5: Dynamic Gas Oracle:** Queries EIP-1559 fee parameters in real time and calculates optimal base and priority fees with a safety buffer.
+*   **Gate 6: Error Diagnosis (RevertDiagnose):** Decodes raw revert hex data into clear, structured error reports so that autonomous agents can self-correct (e.g., automatically adjusting slippage thresholds).
 
 ---
 
-## Architecture and Transaction Flow
+## System Architecture
 
-The sequence diagram below illustrates the lifecycle of a transaction as it passes through the client SDK/MCP server, the on-chain gateway, and the target smart contracts:
+The following diagram illustrates the relationships between the client integration layers, the network optimization services, and the core on-chain smart contracts:
+
+```mermaid
+graph TD
+    subgraph ClientLayer [Client & AI Agent Integration Layer]
+        Agent[AI Agent / LLM]
+        SDK[ExecutionEngine SDK]
+        MCP[Model Context Protocol Server]
+        CLI[Command Line Interface CLI]
+    end
+
+    subgraph OnChainSecurity [On-Chain Security Core - Pharos Atlantic]
+        Gateway[ExecutionEngine.sol]
+        Registry[ProtocolRegistry.sol]
+        Guard[SlippageGuard.sol]
+    end
+
+    subgraph IntegrationServices [Network Services]
+        Oracle[Dynamic Gas Oracle Service]
+        Diagnose[RevertDiagnose Service]
+    end
+
+    Agent -->|SDK Calls| SDK
+    Agent -->|JSON-RPC| MCP
+    Agent -->|Terminal Commands| CLI
+
+    SDK & MCP & CLI -->|1. Pre-flight Check| Registry
+    SDK & MCP & CLI -->|2. Gas Queries| Oracle
+    SDK & MCP & CLI -->|3. Route Execution| Gateway
+
+    Gateway -->|Verify Target Whitelist| Registry
+    Gateway -->|Verify Slippage Bounds| Guard
+    Gateway -->|Forward Low-Level Call| Target[Target Contract]
+
+    Target -->|Revert Hex on Failure| Gateway
+    Gateway -->|Propagate Hex| SDK
+    SDK -->|Decode Hex Error| Diagnose
+    Diagnose -->|Actionable Diagnostic| Agent
+```
+
+---
+
+## Defensive Gate Pipeline
+
+Before a transaction is signed and broadcasted, it passes through the following off-chain and on-chain gateways to ensure safety and inclusion:
+
+```mermaid
+flowchart TD
+    Start([Raw Transaction Payload]) --> Gate1{Gate 1: Registry Check}
+    
+    Gate1 -->|Target Blacklisted| Block1([Block Transaction])
+    Gate1 -->|Target Safe/Unregistered| Gate2{Gate 2: SafeApprove}
+    
+    Gate2 -->|Infinite Approval Requested| Action2[Resize Approval to Exact Cost] --> Gate3{Gate 3: TxPreview}
+    Gate2 -->|Standard Approval| Gate3
+    
+    Gate3 -->|Static Call Reverts| Gate6{Gate 6: RevertDiagnose}
+    Gate3 -->|Static Call Succeeds| Gate4{Gate 4: BatchCompose}
+    
+    Gate6 -->|Decode Hex Error| Suggest[Output Recovery Recommendation] --> Block2([Halt Transaction & Save Gas])
+    
+    Gate4 -->|Sequential Calls Detected| Action4[Bundle into Atomic Multicall] --> Gate5{Gate 5: GasOracle}
+    Gate4 -->|Single Call| Gate5
+    
+    Gate5 -->|Congestion Spike| Action5[Calculate EIP-1559 base + priority fee with 20% buffer] --> Broadcast([Broadcast to Pharos Chain])
+    Gate5 -->|Normal Network| Broadcast
+```
+
+---
+
+## Transaction Lifecycle
+
+The sequence diagram below displays the step-by-step transaction validation, simulation, and execution process:
 
 ```mermaid
 sequenceDiagram
@@ -146,7 +224,7 @@ To target the Pharos Mainnet, update the RPC URL and the deployed contract addre
 ### Setup
 Clone the repository and install the required dependencies:
 ```bash
-git clone https://github.com/PharosNetwork/pharos-skill-engine.git
+git clone https://github.com/enzo151097/pharos-skill-engine.git
 cd pharos-skill-engine
 npm install
 ```
