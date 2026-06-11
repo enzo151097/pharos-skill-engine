@@ -192,6 +192,29 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Developer Tabs System
+  const devTabs = document.querySelectorAll('.dev-tab');
+  devTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Deactivate all tabs
+      devTabs.forEach(t => t.classList.remove('active'));
+      // Activate clicked tab
+      tab.classList.add('active');
+      
+      // Hide all panels
+      const targetPanelId = tab.getAttribute('data-dev-tab');
+      document.querySelectorAll('.dev-panel').forEach(panel => {
+        panel.classList.add('hidden');
+      });
+      
+      // Show targeted panel
+      const targetPanel = document.getElementById(targetPanelId);
+      if (targetPanel) {
+        targetPanel.classList.remove('hidden');
+      }
+    });
+  });
 });
 
 /**

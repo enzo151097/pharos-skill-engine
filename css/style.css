@@ -1568,3 +1568,190 @@ input:checked + .slider:before {
     text-align: center;
 }
 
+/* Developer Tabs System Styling */
+.dev-tabs-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.dev-tabs {
+    display: flex;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.dev-tab {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    min-height: auto;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dev-tab.active {
+    color: var(--primary-accent);
+    border-bottom-color: var(--primary-accent);
+    text-shadow: 0 0 8px rgba(255, 118, 28, 0.4);
+}
+
+.dev-tab:hover {
+    color: var(--text-primary);
+}
+
+.dev-panel {
+    width: 100%;
+}
+
+/* Hero Cyber Shield Graphic Widget */
+.hero-graphic {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    width: 100%;
+    min-height: 350px;
+}
+
+.cyber-shield-widget {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 118, 28, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 22, 28, 0.4);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(255, 118, 28, 0.05);
+}
+
+.pulse-ring {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border: 1px solid rgba(255, 118, 28, 0.15);
+    border-radius: 50%;
+    animation: cyber-pulse 2s infinite linear;
+}
+
+.shield-core {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 10;
+}
+
+.shield-core i {
+    font-size: 64px;
+    color: var(--primary-accent);
+    filter: drop-shadow(0 0 15px rgba(255, 118, 28, 0.5));
+}
+
+.shield-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--primary-accent);
+    text-shadow: 0 0 8px rgba(255, 118, 28, 0.4);
+}
+
+.scanning-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-accent), transparent);
+    animation: scanning-move 3s infinite ease-in-out;
+    box-shadow: 0 0 8px var(--primary-accent);
+    z-index: 5;
+}
+
+/* Security Gate Card Custom Styling */
+.gate-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.gate-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: rgba(255, 118, 28, 0.1);
+    border: 1px solid rgba(255, 118, 28, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: var(--primary-accent);
+    box-shadow: var(--neon-shadow);
+}
+
+.gate-icon i {
+    font-size: 18px;
+}
+
+/* Contract Status Indicators */
+.contract-status-badge {
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-green);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    background: rgba(43, 173, 10, 0.08);
+    border: 1px solid rgba(43, 173, 10, 0.2);
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+.contract-status-badge .status-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-green);
+    box-shadow: 0 0 6px var(--color-green);
+}
+
+/* New Keyframes */
+@keyframes cyber-pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.15);
+        opacity: 0;
+    }
+}
+
+@keyframes scanning-move {
+    0%, 100% {
+        top: 20px;
+    }
+    50% {
+        top: 180px;
+    }
+}
+

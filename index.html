@@ -34,11 +34,10 @@
             </span>
         </a>
         <nav class="topnav" aria-label="Main">
-            <a href="#problem">Problem</a>
-            <a href="#solution">Solution</a>
-            <a href="#how">How it works</a>
+            <a href="#home">Home</a>
+            <a href="#solution">Defensive Gates</a>
+            <a href="#developer-center">Developer Suite</a>
             <a href="#deployed-contracts">Contracts</a>
-            <a href="#agent-install">Install</a>
             <button class="btn btn-primary" data-start-demo>Start Sandbox</button>
         </nav>
     </header>
@@ -48,202 +47,123 @@
         <!-- Hero Section -->
         <section id="home" class="home-hero">
             <div class="home-copy">
-                <h1 class="hero-title">Can a Pharos Agent safely execute transactions?</h1>
+                <h1 class="hero-title">Secure On-Chain Actions for Pharos AI Agents</h1>
                 <p class="hero-desc">
-                    Pharos ExecutionEngine Shield provides agents with a secure transaction sandbox, verifying registry safety, simulation previews, and dynamic gas constraints before value-moving actions are broadcasted on-chain.
+                    An inline transaction gate preventing phishing attacks, slippage losses, and gas failures. Deploy and execute composable skills on the Pharos Atlantic Testnet with absolute cryptographic safety.
                 </p>
                 <div class="hero-actions">
-                    <button class="btn btn-primary btn-large" data-start-demo>Start Sandbox Demo</button>
-                    <a class="btn btn-secondary btn-large" href="#agent-install">Install SDK</a>
+                    <button class="btn btn-primary btn-large" data-start-demo>Open Sandbox Demo</button>
+                    <a class="btn btn-secondary btn-large" href="#developer-center">View Integration Suite</a>
                 </div>
             </div>
             
-            <div class="hero-card code-preview">
-                <div class="code-preview-bar">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <strong>safe_execute.js</strong>
+            <div class="hero-graphic">
+                <div class="cyber-shield-widget">
+                    <div class="pulse-ring"></div>
+                    <div class="shield-core">
+                        <i class="fas fa-shield-halved"></i>
+                        <span class="shield-label">GATE ACTIVE</span>
+                    </div>
+                    <div class="scanning-bar"></div>
                 </div>
-                <pre><code>const { ExecutionEngineSDK } = require("pharos-execution-engine");
+            </div>
+        </section>
 
-async function runSafeTx() {
+        <!-- Defensive Gates Grid -->
+        <section id="solution" class="content-band">
+            <div class="band-header text-center">
+                <h2>The 4 Defensive Gateways</h2>
+                <p>Every agent interaction is audited through sequential verification gates before broadcasting.</p>
+            </div>
+            <div class="point-grid gates-grid">
+                <article class="point-card gate-card">
+                    <div class="gate-icon"><i class="fas fa-list-check"></i></div>
+                    <strong>1. Registry Verification</strong>
+                    <span>Queries the on-chain <code>ProtocolRegistry</code>. Blocks blacklisted contracts and flags unregistered endpoints dynamically.</span>
+                </article>
+                <article class="point-card gate-card">
+                    <div class="gate-icon"><i class="fas fa-bolt"></i></div>
+                    <strong>2. Simulation Preview</strong>
+                    <span>Performs dry-run execution via local static calls. Catches transaction reverts and state exceptions before wasting gas.</span>
+                </article>
+                <article class="point-card gate-card">
+                    <div class="gate-icon"><i class="fas fa-shield"></i></div>
+                    <strong>3. Slippage Protection</strong>
+                    <span>Interfaces with <code>SlippageGuard</code> to restrict value-slippage deviations within developer-specified tolerances.</span>
+                </article>
+                <article class="point-card gate-card">
+                    <div class="gate-icon"><i class="fas fa-gas-pump"></i></div>
+                    <strong>4. Gas Fee Optimizer</strong>
+                    <span>Estimates EIP-1559 base and priority fees with a 20% limit safety margin to guarantee execution under network congestion.</span>
+                </article>
+            </div>
+        </section>
+
+        <!-- Interactive Developer Integration Center -->
+        <section id="developer-center" class="content-band">
+            <div class="band-header">
+                <h2>Developer Integration Suite</h2>
+                <p>Equip your AI agents with transaction safety. Choose between Node SDK integration, CLI testing, or drop-in MCP config.</p>
+            </div>
+            
+            <div class="dev-tabs-container">
+                <div class="dev-tabs" role="tablist">
+                    <button class="dev-tab active" data-dev-tab="tab-sdk">Node.js SDK</button>
+                    <button class="dev-tab" data-dev-tab="tab-cli">Command Line (CLI)</button>
+                    <button class="dev-tab" data-dev-tab="tab-mcp">MCP Server JSON</button>
+                </div>
+                
+                <div class="dev-tab-panels">
+                    <!-- Tab SDK -->
+                    <div id="tab-sdk" class="dev-panel code-window">
+                        <div class="window-bar">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span>sdk_example.js</span>
+                        </div>
+                        <pre><code>const { ExecutionEngineSDK } = require("pharos-execution-engine");
+
+async function executeSecurely() {
   const sdk = new ExecutionEngineSDK(rpcUrl, privateKey, engineAddress);
   
-  // Audits target, runs simulation and executes securely
+  // Audits target, simulates state, estimates EIP-1559 fees and executes
   const receipt = await sdk.safeExecute(
-    "0x2c692A2291ad46D034bAbF4a5ACF287341B7797a", // target
-    "0x",                                         // calldata
-    "0"                                           // value in ETH
+    "0x2c692A2291ad46D034bAbF4a5ACF287341B7797a", // Target Contract
+    "0x",                                         // Calldata Hex
+    "0"                                           // Value in ETH
   );
   return receipt;
 }</code></pre>
-            </div>
-        </section>
-
-        <!-- Problem Section -->
-        <section id="problem" class="content-band">
-            <div class="band-header">
-                <h2>The Problem</h2>
-                <p>
-                    Autonomous AI agents perform complex on-chain interactions independently. However, reusing unknown skills introduces critical security vulnerabilities if transactions are not intercepted:
-                </p>
-            </div>
-            <div class="point-grid">
-                <article class="point-card">
-                    <strong>Malicious & Phishing Targets</strong>
-                    <span>Agents can be tricked by malicious skills into interacting with blacklisted or phishing addresses, draining funds instantly.</span>
-                </article>
-                <article class="point-card">
-                    <strong>Slippage & Frontrunning Losses</strong>
-                    <span>Transactions executed without pre-flight slippage checks suffer severe price manipulation or sandwich attacks.</span>
-                </article>
-                <article class="point-card">
-                    <strong>Out-Of-Gas Failures</strong>
-                    <span>Static gas limit configurations cause transactions to revert in congestion periods, wasting gas fees and breaking agent workflows.</span>
-                </article>
-            </div>
-        </section>
-
-        <!-- Solution Section -->
-        <section id="solution" class="content-band split">
-            <div class="band-header">
-                <h2>The Solution</h2>
-                <p>
-                    Pharos ExecutionEngine Shield combines four security primitives into a unified transaction safety layer:
-                </p>
-            </div>
-            <div class="solution-stack">
-                <article class="solution-card">
-                    <div class="sol-num">01</div>
-                    <div>
-                        <strong>On-chain Registry Verification</strong>
-                        <p>Instant safety check querying our verified <code>ProtocolRegistry</code> database for whitelist or blacklist address status.</p>
                     </div>
-                </article>
-                <article class="solution-card">
-                    <div class="sol-num">02</div>
-                    <div>
-                        <strong>Transaction Preview (TxPreview)</strong>
-                        <p>Simulates proposed transaction outcomes locally via static call state validations before wasting gas fees on-chain.</p>
+                    
+                    <!-- Tab CLI -->
+                    <div id="tab-cli" class="dev-panel code-window hidden">
+                        <div class="window-bar">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span>terminal.sh</span>
+                        </div>
+                        <pre><code># Install execution engine CLI tools globally
+npm install -g pharos-execution-engine
+
+# Compile and build smart contract local assets
+pharos-cli init
+
+# Audit target contract whitelist/blacklist status
+pharos-cli safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</code></pre>
                     </div>
-                </article>
-                <article class="solution-card">
-                    <div class="sol-num">03</div>
-                    <div>
-                        <strong>Slippage Guard Check</strong>
-                        <p>Restricts value-slippage deviations within strict maximum thresholds using our gas-efficient <code>SlippageGuard</code> contract.</p>
-                    </div>
-                </article>
-                <article class="solution-card">
-                    <div class="sol-num">04</div>
-                    <div>
-                        <strong>Dynamic Gas & EIP-1559 Optimizer</strong>
-                        <p>Queries fee data in real-time to compute optimized Base and Priority fees with a 20% safety limit margin.</p>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <!-- How It Works Section -->
-        <section id="how" class="content-band">
-            <div class="band-header">
-                <h2>How It Works</h2>
-                <p>The SDK intercepts transactions, validates parameters against local and on-chain policies, and executes safely.</p>
-            </div>
-            <ol class="steps">
-                <li>
-                    <strong>Verify Target</strong>
-                    <span>SDK performs off-chain formatting and checks target code presence.</span>
-                </li>
-                <li>
-                    <strong>Registry Scan</strong>
-                    <span>Queries <code>ProtocolRegistry.checkAddress(target)</code> to block blacklisted addresses.</span>
-                </li>
-                <li>
-                    <strong>TxPreview Simulation</strong>
-                    <span>Executes a static contract call to dry-run outcomes and catch reverts.</span>
-                </li>
-                <li>
-                    <strong>Gas & Slippage Guard</strong>
-                    <span>Validates slippage criteria and estimates EIP-1559 dynamic gas parameters.</span>
-                </li>
-                <li>
-                    <strong>Secure Execution</strong>
-                    <span>Broadcasts the transaction securely via the <code>ExecutionEngine</code> gate.</span>
-                </li>
-                <li>
-                    <strong>Receipt Explorer</strong>
-                    <span>Returns the transaction receipt with a pharosscan link for proof verification.</span>
-                </li>
-            </ol>
-            <div class="text-center" style="margin-top: 32px;">
-                <button class="btn btn-primary btn-large" data-start-demo>Launch Interactive Sandbox</button>
-            </div>
-        </section>
-
-        <!-- Architecture Flow -->
-        <section id="architecture" class="content-band">
-            <div class="band-header">
-                <h2>System Architecture</h2>
-                <p>The Shield acts as an inline proxy between the AI Agent logic and the Pharos Chain ledger.</p>
-            </div>
-            <div class="architecture-flow">
-                <span>AI Agent Logic</span>
-                <span>ExecutionEngine SDK</span>
-                <span>ProtocolRegistry (Check)</span>
-                <span>SlippageGuard (Slippage)</span>
-                <span>TxPreview (Simulation)</span>
-                <span>Pharos Chain (Broadcast)</span>
-            </div>
-        </section>
-
-        <!-- Integration / Install Section -->
-        <section id="agent-install" class="developer-showcase">
-            <div class="showcase-copy">
-                <h2>Integrate in 5 Minutes</h2>
-                <p>
-                    Integrate transaction safety into any Node-based agent, TypeScript runtime, CLI terminal, or Model Context Protocol (MCP) server environment.
-                </p>
-                <div class="showcase-actions">
-                    <a class="btn btn-primary" href="#mcp-config">MCP Server Setup</a>
-                    <a class="btn btn-secondary" href="#deployed-contracts">Deployed Contracts</a>
-                </div>
-            </div>
-            <div class="code-window">
-                <div class="window-bar">
-                    <span class="dot red"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
-                    <span>install.sh</span>
-                </div>
-                <pre><code># Install dependencies
-npm install pharos-execution-engine
-
-# Initialize project assets and compile
-npx pharos-cli init
-
-# Verify a target contract safety check
-npx pharos-cli safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</code></pre>
-            </div>
-        </section>
-
-        <!-- MCP Config Showcase -->
-        <section id="mcp-config" class="developer-showcase reverse">
-            <div class="showcase-copy">
-                <h2>Drop-In MCP Configuration</h2>
-                <p>
-                    Add the ExecutionEngine Shield to your favorite AI agent client (Claude Desktop, Cursor, Eliza) to give it direct access to EVM safety tools.
-                </p>
-            </div>
-            <div class="code-window">
-                <div class="window-bar">
-                    <span class="dot red"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
-                    <span>claude_desktop_config.json</span>
-                </div>
-                <pre><code>{
+                    
+                    <!-- Tab MCP -->
+                    <div id="tab-mcp" class="dev-panel code-window hidden">
+                        <div class="window-bar">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span>claude_desktop_config.json</span>
+                        </div>
+                        <pre><code>{
   "mcpServers": {
     "pharos-execution-shield": {
       "command": "npx",
@@ -256,29 +176,32 @@ npx pharos-cli safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</code></p
     }
   }
 }</code></pre>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Deployed Contracts List -->
+        <!-- Smart Contract Hub -->
         <section id="deployed-contracts" class="content-band">
             <div class="band-header">
-                <h2>Verified Contracts on Pharos Atlantic</h2>
-                <p>
-                    All modules are officially deployed and verified. You can inspect their state directly on the Pharos Atlantic block explorer:
-                </p>
+                <h2>Verified Smart Contracts</h2>
+                <p>Inspect the on-chain components deployed and verified on the Pharos Atlantic Testnet.</p>
             </div>
-            <div class="point-grid">
+            <div class="point-grid contracts-grid">
                 <article class="point-card contract-card">
+                    <div class="contract-status-badge"><span class="status-dot connected"></span> Active</div>
                     <strong>ProtocolRegistry</strong>
                     <code class="font-mono">0x8d87E6b8...C937</code>
                     <a href="https://atlantic.pharosscan.xyz/address/0x8d87E6b80218a71be0D3DaB452020267c69BC937" target="_blank" class="explorer-link">Inspect Contract ↗</a>
                 </article>
                 <article class="point-card contract-card">
+                    <div class="contract-status-badge"><span class="status-dot connected"></span> Active</div>
                     <strong>SlippageGuard</strong>
                     <code class="font-mono">0x0b72Ed35...0243</code>
                     <a href="https://atlantic.pharosscan.xyz/address/0x0b72Ed35d27a77a8C1CD32E0eDB7D7326A460243" target="_blank" class="explorer-link">Inspect Contract ↗</a>
                 </article>
                 <article class="point-card contract-card">
+                    <div class="contract-status-badge"><span class="status-dot connected"></span> Active</div>
                     <strong>ExecutionEngine Core</strong>
                     <code class="font-mono">0xe0C047cB...7014</code>
                     <a href="https://atlantic.pharosscan.xyz/address/0xe0C047cBCBDB0e4b5Ca5544faec06A1eED247014" target="_blank" class="explorer-link">Inspect Contract ↗</a>
