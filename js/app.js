@@ -341,8 +341,10 @@ function writeLog(message, type = 'system') {
   div.innerHTML = `[${timeStr}] ${message}`;
   terminalOutput.appendChild(div);
   
-  // Auto-scroll
-  terminalOutput.scrollTop = terminalOutput.scrollHeight;
+  // Auto-scroll after DOM paint
+  setTimeout(() => {
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+  }, 20);
 }
 
 /**
