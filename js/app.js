@@ -127,6 +127,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Init Connection Check
   initWeb3();
+
+  // Page Routing System
+  const landingPage = document.getElementById('landingPage');
+  const demoPage = document.getElementById('demoPage');
+  const brandLink = document.getElementById('brand-link');
+
+  function showDemo() {
+    if (landingPage) landingPage.classList.add('hidden');
+    if (demoPage) demoPage.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateUI();
+  }
+
+  function showHome() {
+    if (demoPage) demoPage.classList.add('hidden');
+    if (landingPage) landingPage.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Bind Start Demo buttons
+  document.querySelectorAll('[data-start-demo]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showDemo();
+    });
+  });
+
+  // Bind Back Home buttons
+  document.querySelectorAll('[data-back-home]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showHome();
+    });
+  });
+
+  if (brandLink) {
+    brandLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showHome();
+    });
+  }
+
+  // Handle Topbar navigation scrolling and routing
+  document.querySelectorAll('.topnav a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const hash = link.getAttribute('href');
+      if (hash && hash.startsWith('#') && hash !== '#') {
+        e.preventDefault();
+        showHome();
+        setTimeout(() => {
+          const targetEl = document.querySelector(hash);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    });
+  });
 });
 
 /**

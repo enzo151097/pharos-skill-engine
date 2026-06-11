@@ -21,197 +21,459 @@
     <script defer src="js/app.js"></script>
 </head>
 <body>
-    <!-- Header Component -->
-    <header class="app-header" id="app-header">
-        <div class="header-brand">
-            <h1 id="app-title">Pharos ExecutionEngine Shield</h1>
-            <span class="badge badge-network">Pharos Atlantic</span>
-        </div>
-        
-        <div class="header-controls">
-            <!-- Mock Mode Toggle Switch -->
-            <div class="mock-mode-container">
-                <span class="toggle-label" id="mock-mode-label">Mock Mode</span>
-                <label class="switch" for="mock-mode-toggle">
-                    <input type="checkbox" id="mock-mode-toggle" aria-labelledby="mock-mode-label">
-                    <span class="slider round"></span>
-                </label>
-            </div>
-            
-            <!-- Wallet Status Indicator -->
-            <div class="wallet-status-indicator" id="wallet-status-indicator">
-                <span id="wallet-status-dot" class="status-dot disconnected" aria-label="Wallet Status: Disconnected"></span>
-                <span id="wallet-account" class="account-text">Disconnected</span>
-            </div>
-            
-            <!-- Connect Button -->
-            <button id="btn-connect-wallet" class="btn btn-connect">Connect Wallet</button>
-        </div>
+    <!-- Topbar Component -->
+    <header class="topbar" id="app-header">
+        <a class="brand" href="#home" id="brand-link">
+            <span class="brand-mark">PES</span>
+            <span>
+                <strong>Pharos Execution Shield</strong>
+                <small>Transaction safety layer for AI agents</small>
+            </span>
+        </a>
+        <nav class="topnav" aria-label="Main">
+            <a href="#problem">Problem</a>
+            <a href="#solution">Solution</a>
+            <a href="#how">How it works</a>
+            <a href="#deployed-contracts">Contracts</a>
+            <a href="#agent-install">Install</a>
+            <button class="btn btn-primary" data-start-demo>Start Sandbox</button>
+        </nav>
     </header>
 
-    <!-- Main Dashboard Grid Container -->
-    <main class="dashboard-grid" id="dashboard-grid">
-        
-        <!-- Card 1: Safe Sandbox -->
-        <section class="card card-sandbox" id="card-sandbox" aria-labelledby="sandbox-title">
-            <div class="card-header">
-                <h2 id="sandbox-title" class="card-title">Safe Sandbox</h2>
-                <span class="card-subtitle">Verify, simulate, and execute transactions safely.</span>
+    <!-- Main Landing Page Container -->
+    <main id="landingPage" class="landing-page">
+        <!-- Hero Section -->
+        <section id="home" class="home-hero">
+            <div class="home-copy">
+                <h1 class="hero-title">Can a Pharos Agent safely execute transactions?</h1>
+                <p class="hero-desc">
+                    Pharos ExecutionEngine Shield provides agents with a secure transaction sandbox, verifying registry safety, simulation previews, and dynamic gas constraints before value-moving actions are broadcasted on-chain.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary btn-large" data-start-demo>Start Sandbox Demo</button>
+                    <a class="btn btn-secondary btn-large" href="#agent-install">Install SDK</a>
+                </div>
             </div>
             
-            <form id="sandbox-form" class="sandbox-form" onsubmit="event.preventDefault();">
-                <div class="form-group">
-                    <label for="sandbox-target">Target Address</label>
-                    <input type="text" id="sandbox-target" class="form-control" placeholder="0x..." required pattern="^0x[a-fA-F0-9]{40}$" title="Enter a valid 40-character Ethereum address (0x...)">
+            <div class="hero-card code-preview">
+                <div class="code-preview-bar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <strong>safe_execute.js</strong>
                 </div>
-                
-                <div class="form-group">
-                    <label for="sandbox-calldata">Calldata (Hex)</label>
-                    <input type="text" id="sandbox-calldata" class="form-control font-mono" placeholder="0x" value="0x" required pattern="^0x[a-fA-F0-9]*$" title="Enter hex data starting with 0x">
-                </div>
-                
-                <div class="form-group">
-                    <label for="sandbox-value">Value (ETH)</label>
-                    <input type="number" id="sandbox-value" class="form-control" placeholder="0" value="0" step="any" min="0" required>
-                </div>
-                
-                <div class="sandbox-actions">
-                    <button type="button" id="btn-verify-simulate" class="btn btn-secondary" disabled>Verify & Simulate</button>
-                    <button type="button" id="btn-safe-execute" class="btn btn-primary" disabled>Safe Execute</button>
-                </div>
-            </form>
-            
-            <!-- Visual Scanner Pipeline -->
-            <div class="scanner-container" id="scanner-container">
-                <div class="shield-display">
-                    <div class="shield-glow" id="shield-glow"></div>
-                    <div class="shield-icon" id="shield-icon">🛡️</div>
-                    <div class="shield-status" id="shield-status">READY</div>
-                </div>
-                <div class="pipeline-steps">
-                    <div class="step-connector"></div>
-                    <div class="step" id="step-audit">
-                        <div class="step-dot">🔍</div>
-                        <span class="step-label">Audit</span>
-                    </div>
-                    <div class="step" id="step-blacklist">
-                        <div class="step-dot">🛡️</div>
-                        <span class="step-label">Registry</span>
-                    </div>
-                    <div class="step" id="step-preview">
-                        <div class="step-dot">⚙️</div>
-                        <span class="step-label">Preview</span>
-                    </div>
-                    <div class="step" id="step-guard">
-                        <div class="step-dot">⛽</div>
-                        <span class="step-label">Fees</span>
-                    </div>
-                </div>
+                <pre><code>const { ExecutionEngineSDK } = require("pharos-execution-engine");
+
+async function runSafeTx() {
+  const sdk = new ExecutionEngineSDK(rpcUrl, privateKey, engineAddress);
+  
+  // Audits target, runs simulation and executes securely
+  const receipt = await sdk.safeExecute(
+    "0x2c692A2291ad46D034bAbF4a5ACF287341B7797a", // target
+    "0x",                                         // calldata
+    "0"                                           // value in ETH
+  );
+  return receipt;
+}</code></pre>
             </div>
         </section>
 
-        <!-- Card 2: Protocol Registry & Monitor -->
-        <section class="card card-registry" id="card-registry" aria-labelledby="registry-title">
-            <div class="card-header">
-                <h2 id="registry-title" class="card-title">Protocol Registry & Monitor</h2>
-                <span class="card-subtitle">On-chain whitelist and blacklist administration.</span>
+        <!-- Problem Section -->
+        <section id="problem" class="content-band">
+            <div class="band-header">
+                <h2>The Problem</h2>
+                <p>
+                    Autonomous AI agents perform complex on-chain interactions independently. However, reusing unknown skills introduces critical security vulnerabilities if transactions are not intercepted:
+                </p>
             </div>
-            
-            <!-- Address Check Input -->
-            <div class="registry-search-container">
-                <div class="form-group inline-group">
-                    <label for="registry-search-address" class="sr-only">Search Address</label>
-                    <input type="text" id="registry-search-address" class="form-control" placeholder="Search Address (0x...)" pattern="^0x[a-fA-F0-9]{40}$" title="Enter a valid Ethereum address">
-                    <button type="button" id="btn-registry-check" class="btn btn-secondary">Check</button>
-                </div>
-            </div>
-            
-            <!-- Admin Controls (Owner Only) -->
-            <div class="admin-controls-section" id="admin-controls-section">
-                <h3 class="section-title">Admin Controls <span class="badge badge-owner">Owner Only</span></h3>
-                <div class="admin-actions">
-                    <button type="button" id="btn-admin-whitelist" class="btn btn-success" disabled>Whitelist</button>
-                    <button type="button" id="btn-admin-blacklist" class="btn btn-danger" disabled>Blacklist</button>
-                </div>
-            </div>
-            
-            <!-- Quick-load sample address list -->
-            <div class="sample-addresses-section" id="sample-addresses-section">
-                <h3 class="section-title">Quick-Load Test Addresses</h3>
-                <div class="table-container">
-                    <table class="sample-table" id="sample-table">
-                        <thead>
-                            <tr>
-                                <th>Name / Address</th>
-                                <th>Status</th>
-                                <th class="text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Sample: MockTarget -->
-                            <tr class="sample-row">
-                                <td>
-                                    <div class="sample-name">MockTarget (Test Contract)</div>
-                                    <div class="sample-address font-mono">0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</div>
-                                </td>
-                                <td><span class="badge status-verified">Verified</span></td>
-                                <td class="text-right">
-                                    <button type="button" class="btn btn-sm btn-load-sample" 
-                                            data-name="MockTarget"
-                                            data-address="0x2c692A2291ad46D034bAbF4a5ACF287341B7797a"
-                                            data-calldata="0x"
-                                            data-value="0">Load to Sandbox</button>
-                                </td>
-                            </tr>
-                            <!-- Sample: Uniswap Router -->
-                            <tr class="sample-row">
-                                <td>
-                                    <div class="sample-name">Uniswap V2 Router</div>
-                                    <div class="sample-address font-mono">0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D</div>
-                                </td>
-                                <td><span class="badge status-whitelisted">Whitelisted</span></td>
-                                <td class="text-right">
-                                    <button type="button" class="btn btn-sm btn-load-sample" 
-                                            data-name="Uniswap V2 Router"
-                                            data-address="0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
-                                            data-calldata="0x"
-                                            data-value="0">Load to Sandbox</button>
-                                </td>
-                            </tr>
-                            <!-- Sample: Malicious Target -->
-                            <tr class="sample-row">
-                                <td>
-                                    <div class="sample-name">Malicious Target (Phishing)</div>
-                                    <div class="sample-address font-mono">0x1111111254fb6c44bac0bed2854e76f90643097d</div>
-                                </td>
-                                <td><span class="badge status-blacklisted">Blacklisted</span></td>
-                                <td class="text-right">
-                                    <button type="button" class="btn btn-sm btn-load-sample" 
-                                            data-name="Malicious Target"
-                                            data-address="0x1111111254fb6c44bac0bed2854e76f90643097d"
-                                            data-calldata="0x"
-                                            data-value="0">Load to Sandbox</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="point-grid">
+                <article class="point-card">
+                    <strong>Malicious & Phishing Targets</strong>
+                    <span>Agents can be tricked by malicious skills into interacting with blacklisted or phishing addresses, draining funds instantly.</span>
+                </article>
+                <article class="point-card">
+                    <strong>Slippage & Frontrunning Losses</strong>
+                    <span>Transactions executed without pre-flight slippage checks suffer severe price manipulation or sandwich attacks.</span>
+                </article>
+                <article class="point-card">
+                    <strong>Out-Of-Gas Failures</strong>
+                    <span>Static gas limit configurations cause transactions to revert in congestion periods, wasting gas fees and breaking agent workflows.</span>
+                </article>
             </div>
         </section>
 
-        <!-- Card 3: Terminal Console Widget -->
-        <section class="card card-terminal" id="card-terminal" aria-labelledby="terminal-title">
-            <div class="terminal-header">
-                <h2 id="terminal-title" class="terminal-title">SYSTEM OUTPUT CONSOLE</h2>
-                <button type="button" id="btn-clear-terminal" class="btn btn-clear">Clear</button>
+        <!-- Solution Section -->
+        <section id="solution" class="content-band split">
+            <div class="band-header">
+                <h2>The Solution</h2>
+                <p>
+                    Pharos ExecutionEngine Shield combines four security primitives into a unified transaction safety layer:
+                </p>
             </div>
-            <div class="terminal">
-                <div id="terminal-output" class="terminal-output" role="log" aria-live="polite">
-                    <div class="terminal-line system-msg">Pharos ExecutionEngine Shield Console initialized. Ready.</div>
-                </div>
+            <div class="solution-stack">
+                <article class="solution-card">
+                    <div class="sol-num">01</div>
+                    <div>
+                        <strong>On-chain Registry Verification</strong>
+                        <p>Instant safety check querying our verified <code>ProtocolRegistry</code> database for whitelist or blacklist address status.</p>
+                    </div>
+                </article>
+                <article class="solution-card">
+                    <div class="sol-num">02</div>
+                    <div>
+                        <strong>Transaction Preview (TxPreview)</strong>
+                        <p>Simulates proposed transaction outcomes locally via static call state validations before wasting gas fees on-chain.</p>
+                    </div>
+                </article>
+                <article class="solution-card">
+                    <div class="sol-num">03</div>
+                    <div>
+                        <strong>Slippage Guard Check</strong>
+                        <p>Restricts value-slippage deviations within strict maximum thresholds using our gas-efficient <code>SlippageGuard</code> contract.</p>
+                    </div>
+                </article>
+                <article class="solution-card">
+                    <div class="sol-num">04</div>
+                    <div>
+                        <strong>Dynamic Gas & EIP-1559 Optimizer</strong>
+                        <p>Queries fee data in real-time to compute optimized Base and Priority fees with a 20% safety limit margin.</p>
+                    </div>
+                </article>
             </div>
         </section>
-        
+
+        <!-- How It Works Section -->
+        <section id="how" class="content-band">
+            <div class="band-header">
+                <h2>How It Works</h2>
+                <p>The SDK intercepts transactions, validates parameters against local and on-chain policies, and executes safely.</p>
+            </div>
+            <ol class="steps">
+                <li>
+                    <strong>Verify Target</strong>
+                    <span>SDK performs off-chain formatting and checks target code presence.</span>
+                </li>
+                <li>
+                    <strong>Registry Scan</strong>
+                    <span>Queries <code>ProtocolRegistry.checkAddress(target)</code> to block blacklisted addresses.</span>
+                </li>
+                <li>
+                    <strong>TxPreview Simulation</strong>
+                    <span>Executes a static contract call to dry-run outcomes and catch reverts.</span>
+                </li>
+                <li>
+                    <strong>Gas & Slippage Guard</strong>
+                    <span>Validates slippage criteria and estimates EIP-1559 dynamic gas parameters.</span>
+                </li>
+                <li>
+                    <strong>Secure Execution</strong>
+                    <span>Broadcasts the transaction securely via the <code>ExecutionEngine</code> gate.</span>
+                </li>
+                <li>
+                    <strong>Receipt Explorer</strong>
+                    <span>Returns the transaction receipt with a pharosscan link for proof verification.</span>
+                </li>
+            </ol>
+            <div class="text-center" style="margin-top: 32px;">
+                <button class="btn btn-primary btn-large" data-start-demo>Launch Interactive Sandbox</button>
+            </div>
+        </section>
+
+        <!-- Architecture Flow -->
+        <section id="architecture" class="content-band">
+            <div class="band-header">
+                <h2>System Architecture</h2>
+                <p>The Shield acts as an inline proxy between the AI Agent logic and the Pharos Chain ledger.</p>
+            </div>
+            <div class="architecture-flow">
+                <span>AI Agent Logic</span>
+                <span>ExecutionEngine SDK</span>
+                <span>ProtocolRegistry (Check)</span>
+                <span>SlippageGuard (Slippage)</span>
+                <span>TxPreview (Simulation)</span>
+                <span>Pharos Chain (Broadcast)</span>
+            </div>
+        </section>
+
+        <!-- Integration / Install Section -->
+        <section id="agent-install" class="developer-showcase">
+            <div class="showcase-copy">
+                <h2>Integrate in 5 Minutes</h2>
+                <p>
+                    Integrate transaction safety into any Node-based agent, TypeScript runtime, CLI terminal, or Model Context Protocol (MCP) server environment.
+                </p>
+                <div class="showcase-actions">
+                    <a class="btn btn-primary" href="#mcp-config">MCP Server Setup</a>
+                    <a class="btn btn-secondary" href="#deployed-contracts">Deployed Contracts</a>
+                </div>
+            </div>
+            <div class="code-window">
+                <div class="window-bar">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span>install.sh</span>
+                </div>
+                <pre><code># Install dependencies
+npm install pharos-execution-engine
+
+# Initialize project assets and compile
+npx pharos-cli init
+
+# Verify a target contract safety check
+npx pharos-cli safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</code></pre>
+            </div>
+        </section>
+
+        <!-- MCP Config Showcase -->
+        <section id="mcp-config" class="developer-showcase reverse">
+            <div class="showcase-copy">
+                <h2>Drop-In MCP Configuration</h2>
+                <p>
+                    Add the ExecutionEngine Shield to your favorite AI agent client (Claude Desktop, Cursor, Eliza) to give it direct access to EVM safety tools.
+                </p>
+            </div>
+            <div class="code-window">
+                <div class="window-bar">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span>claude_desktop_config.json</span>
+                </div>
+                <pre><code>{
+  "mcpServers": {
+    "pharos-execution-shield": {
+      "command": "npx",
+      "args": ["pharos-mcp"],
+      "env": {
+        "PHAROS_RPC_URL": "https://atlantic.dplabs-internal.com",
+        "PHAROS_PRIVATE_KEY": "YOUR_PRIVATE_KEY",
+        "EXECUTION_ENGINE_CORE_ADDRESS": "0xe0C047cBCBDB0e4b5Ca5544faec06A1eED247014"
+      }
+    }
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Deployed Contracts List -->
+        <section id="deployed-contracts" class="content-band">
+            <div class="band-header">
+                <h2>Verified Contracts on Pharos Atlantic</h2>
+                <p>
+                    All modules are officially deployed and verified. You can inspect their state directly on the Pharos Atlantic block explorer:
+                </p>
+            </div>
+            <div class="point-grid">
+                <article class="point-card contract-card">
+                    <strong>ProtocolRegistry</strong>
+                    <code class="font-mono">0x8d87E6b8...C937</code>
+                    <a href="https://atlantic.pharosscan.xyz/address/0x8d87E6b80218a71be0D3DaB452020267c69BC937" target="_blank" class="explorer-link">Inspect Contract ↗</a>
+                </article>
+                <article class="point-card contract-card">
+                    <strong>SlippageGuard</strong>
+                    <code class="font-mono">0x0b72Ed35...0243</code>
+                    <a href="https://atlantic.pharosscan.xyz/address/0x0b72Ed35d27a77a8C1CD32E0eDB7D7326A460243" target="_blank" class="explorer-link">Inspect Contract ↗</a>
+                </article>
+                <article class="point-card contract-card">
+                    <strong>ExecutionEngine Core</strong>
+                    <code class="font-mono">0xe0C047cB...7014</code>
+                    <a href="https://atlantic.pharosscan.xyz/address/0xe0C047cBCBDB0e4b5Ca5544faec06A1eED247014" target="_blank" class="explorer-link">Inspect Contract ↗</a>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- Main Demo Page Container -->
+    <main id="demoPage" class="demo-page hidden">
+        <div class="demo-top-bar">
+            <button class="btn btn-secondary" data-back-home>← Back to Home</button>
+            
+            <div class="demo-header-controls">
+                <!-- Mock Mode Toggle Switch -->
+                <div class="mock-mode-container">
+                    <span class="toggle-label" id="mock-mode-label">Mock Mode</span>
+                    <label class="switch" for="mock-mode-toggle">
+                        <input type="checkbox" id="mock-mode-toggle" aria-labelledby="mock-mode-label">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                
+                <!-- Wallet Status Indicator -->
+                <div class="wallet-status-indicator" id="wallet-status-indicator">
+                    <span id="wallet-status-dot" class="status-dot disconnected" aria-label="Wallet Status: Disconnected"></span>
+                    <span id="wallet-account" class="account-text">Disconnected</span>
+                </div>
+                
+                <!-- Connect Button -->
+                <button id="btn-connect-wallet" class="btn btn-connect">Connect Wallet</button>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid Container -->
+        <div class="dashboard-grid" id="dashboard-grid">
+            
+            <!-- Card 1: Safe Sandbox -->
+            <section class="card card-sandbox" id="card-sandbox" aria-labelledby="sandbox-title">
+                <div class="card-header">
+                    <h2 id="sandbox-title" class="card-title">Safe Sandbox</h2>
+                    <span class="card-subtitle">Verify, simulate, and execute transactions safely.</span>
+                </div>
+                
+                <form id="sandbox-form" class="sandbox-form" onsubmit="event.preventDefault();">
+                    <div class="form-group">
+                        <label for="sandbox-target">Target Address</label>
+                        <input type="text" id="sandbox-target" class="form-control" placeholder="0x..." required pattern="^0x[a-fA-F0-9]{40}$" title="Enter a valid 40-character Ethereum address (0x...)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sandbox-calldata">Calldata (Hex)</label>
+                        <input type="text" id="sandbox-calldata" class="form-control font-mono" placeholder="0x" value="0x" required pattern="^0x[a-fA-F0-9]*$" title="Enter hex data starting with 0x">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sandbox-value">Value (ETH)</label>
+                        <input type="number" id="sandbox-value" class="form-control" placeholder="0" value="0" step="any" min="0" required>
+                    </div>
+                    
+                    <div class="sandbox-actions">
+                        <button type="button" id="btn-verify-simulate" class="btn btn-secondary" disabled>Verify & Simulate</button>
+                        <button type="button" id="btn-safe-execute" class="btn btn-primary" disabled>Safe Execute</button>
+                    </div>
+                </form>
+                
+                <!-- Visual Scanner Pipeline -->
+                <div class="scanner-container" id="scanner-container">
+                    <div class="shield-display">
+                        <div class="shield-glow" id="shield-glow"></div>
+                        <div class="shield-icon" id="shield-icon">🛡️</div>
+                        <div class="shield-status" id="shield-status">READY</div>
+                    </div>
+                    <div class="pipeline-steps">
+                        <div class="step-connector"></div>
+                        <div class="step" id="step-audit">
+                            <div class="step-dot">🔍</div>
+                            <span class="step-label">Audit</span>
+                        </div>
+                        <div class="step" id="step-blacklist">
+                            <div class="step-dot">🛡️</div>
+                            <span class="step-label">Registry</span>
+                        </div>
+                        <div class="step" id="step-preview">
+                            <div class="step-dot">⚙️</div>
+                            <span class="step-label">Preview</span>
+                        </div>
+                        <div class="step" id="step-guard">
+                            <div class="step-dot">⛽</div>
+                            <span class="step-label">Fees</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Card 2: Protocol Registry & Monitor -->
+            <section class="card card-registry" id="card-registry" aria-labelledby="registry-title">
+                <div class="card-header">
+                    <h2 id="registry-title" class="card-title">Protocol Registry & Monitor</h2>
+                    <span class="card-subtitle">On-chain whitelist and blacklist administration.</span>
+                </div>
+                
+                <!-- Address Check Input -->
+                <div class="registry-search-container">
+                    <div class="form-group inline-group">
+                        <label for="registry-search-address" class="sr-only">Search Address</label>
+                        <input type="text" id="registry-search-address" class="form-control" placeholder="Search Address (0x...)" pattern="^0x[a-fA-F0-9]{40}$" title="Enter a valid Ethereum address">
+                        <button type="button" id="btn-registry-check" class="btn btn-secondary">Check</button>
+                    </div>
+                </div>
+                
+                <!-- Admin Controls (Owner Only) -->
+                <div class="admin-controls-section" id="admin-controls-section">
+                    <h3 class="section-title">Admin Controls <span class="badge badge-owner">Owner Only</span></h3>
+                    <div class="admin-actions">
+                        <button type="button" id="btn-admin-whitelist" class="btn btn-success" disabled>Whitelist</button>
+                        <button type="button" id="btn-admin-blacklist" class="btn btn-danger" disabled>Blacklist</button>
+                    </div>
+                </div>
+                
+                <!-- Quick-load sample address list -->
+                <div class="sample-addresses-section" id="sample-addresses-section">
+                    <h3 class="section-title">Quick-Load Test Addresses</h3>
+                    <div class="table-container">
+                        <table class="sample-table" id="sample-table">
+                            <thead>
+                                <tr>
+                                    <th>Name / Address</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Sample: MockTarget -->
+                                <tr class="sample-row">
+                                    <td>
+                                        <div class="sample-name">MockTarget (Test Contract)</div>
+                                        <div class="sample-address font-mono">0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</div>
+                                    </td>
+                                    <td><span class="badge status-verified">Verified</span></td>
+                                    <td class="text-right">
+                                        <button type="button" class="btn btn-sm btn-load-sample" 
+                                                data-name="MockTarget"
+                                                data-address="0x2c692A2291ad46D034bAbF4a5ACF287341B7797a"
+                                                data-calldata="0x"
+                                                data-value="0">Load to Sandbox</button>
+                                    </td>
+                                </tr>
+                                <!-- Sample: Uniswap Router -->
+                                <tr class="sample-row">
+                                    <td>
+                                        <div class="sample-name">Uniswap V2 Router</div>
+                                        <div class="sample-address font-mono">0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D</div>
+                                    </td>
+                                    <td><span class="badge status-whitelisted">Whitelisted</span></td>
+                                    <td class="text-right">
+                                        <button type="button" class="btn btn-sm btn-load-sample" 
+                                                data-name="Uniswap V2 Router"
+                                                data-address="0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+                                                data-calldata="0x"
+                                                data-value="0">Load to Sandbox</button>
+                                    </td>
+                                </tr>
+                                <!-- Sample: Malicious Target -->
+                                <tr class="sample-row">
+                                    <td>
+                                        <div class="sample-name">Malicious Target (Phishing)</div>
+                                        <div class="sample-address font-mono">0x1111111254fb6c44bac0bed2854e76f90643097d</div>
+                                    </td>
+                                    <td><span class="badge status-blacklisted">Blacklisted</span></td>
+                                    <td class="text-right">
+                                        <button type="button" class="btn btn-sm btn-load-sample" 
+                                                data-name="Malicious Target"
+                                                data-address="0x1111111254fb6c44bac0bed2854e76f90643097d"
+                                                data-calldata="0x"
+                                                data-value="0">Load to Sandbox</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Card 3: Terminal Console Widget -->
+            <section class="card card-terminal" id="card-terminal" aria-labelledby="terminal-title">
+                <div class="terminal-header">
+                    <h2 id="terminal-title" class="terminal-title">SYSTEM OUTPUT CONSOLE</h2>
+                    <button type="button" id="btn-clear-terminal" class="btn btn-clear">Clear</button>
+                </div>
+                <div class="terminal">
+                    <div id="terminal-output" class="terminal-output" role="log" aria-live="polite">
+                        <div class="terminal-line system-msg">Pharos ExecutionEngine Shield Console initialized. Ready.</div>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
     </main>
 
     <!-- Footer Component -->
