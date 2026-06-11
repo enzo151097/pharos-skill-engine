@@ -111,16 +111,16 @@
                 <div class="flow-detail-card" id="flow-detail-card">
                     <div class="detail-header">
                         <div class="detail-icon" id="detail-gate-icon"><i class="fas fa-list-check"></i></div>
-                        <h3 id="detail-gate-title">ProtocolRegistry Gate (Cổng Kiểm Duyệt Giao Thức)</h3>
+                        <h3 id="detail-gate-title">ProtocolRegistry Gate</h3>
                     </div>
                     <div class="detail-body">
                         <div class="detail-block block-problem">
-                            <span class="block-label"><i class="fas fa-triangle-exclamation"></i> Rủi ro lớn nhất (Vulnerability)</span>
-                            <p id="detail-problem-text">AI Agent gửi tài sản vào các địa chỉ hợp đồng giả mạo, ví phishing hoặc ví drainer không được kiểm định, dẫn tới nguy cơ mất trắng toàn bộ tài sản trong ví.</p>
+                            <span class="block-label"><i class="fas fa-triangle-exclamation"></i> Critical Risk (Vulnerability)</span>
+                            <p id="detail-problem-text">AI Agents dynamically call contracts. Malicious actors can supply phishing addresses to drain the agent's wallet assets.</p>
                         </div>
                         <div class="detail-block block-strength">
-                            <span class="block-label"><i class="fas fa-shield-halved"></i> Sức mạnh của Cổng (PES Strength)</span>
-                            <p id="detail-strength-text">Kiểm tra động trạng thái Whitelist/Blacklist của địa chỉ đích trước khi thực hiện giao dịch thông qua ProtocolRegistry.sol trên chuỗi Pharos. Chặn đứng giao dịch ngay tại cổng số 1 nếu phát hiện dấu hiệu lừa đảo.</p>
+                            <span class="block-label"><i class="fas fa-shield-halved"></i> Gate Strength (PES Strength)</span>
+                            <p id="detail-strength-text">Intercepts the call and queries ProtocolRegistry.sol on Pharos. Halts execution immediately at Gate 1 if the address is blacklisted.</p>
                         </div>
                     </div>
                     <div class="detail-footer">
@@ -210,43 +210,43 @@
                 <article class="point-card gate-card">
                     <div class="gate-icon"><i class="fas fa-list-check"></i></div>
                     <strong class="gate-name">1. Registry Verification</strong>
-                    <div class="gate-problem"><strong>Vấn đề:</strong> Wallet drains & phishing contracts.</div>
-                    <div class="gate-strength"><strong>Sức mạnh:</strong> Chặn đứng lập tức các giao dịch gửi tiền tới ví lừa đảo.</div>
+                    <div class="gate-problem"><strong>Problem:</strong> Wallet drains & phishing contracts.</div>
+                    <div class="gate-strength"><strong>Strength:</strong> Blocks connections to phishing addresses instantly to protect user funds.</div>
                     <code class="gate-contract font-mono">ProtocolRegistry.sol</code>
                 </article>
                 <article class="point-card gate-card">
                     <div class="gate-icon"><i class="fas fa-shield-halved"></i></div>
                     <strong class="gate-name">2. SafeApprove Control</strong>
-                    <div class="gate-problem"><strong>Vấn đề:</strong> Infinite ERC20 approvals vulnerability.</div>
-                    <div class="gate-strength"><strong>Sức mạnh:</strong> Giới hạn quyền duyệt ví về mức tối thiểu cho từng giao dịch.</div>
+                    <div class="gate-problem"><strong>Problem:</strong> Infinite ERC20 approvals vulnerability.</div>
+                    <div class="gate-strength"><strong>Strength:</strong> Automatically downscales token approvals to match exact transaction requirements.</div>
                     <code class="gate-contract font-mono">SafeApprove SDK logic</code>
                 </article>
                 <article class="point-card gate-card">
                     <div class="gate-icon"><i class="fas fa-binoculars"></i></div>
                     <strong class="gate-name">3. Simulation Preview (TxPreview)</strong>
-                    <div class="gate-problem"><strong>Vấn đề:</strong> High gas fee waste on failed reverts.</div>
-                    <div class="gate-strength"><strong>Sức mạnh:</strong> Chạy thử trước (dry-run) và dự đoán thay đổi tài sản 100% chính xác.</div>
+                    <div class="gate-problem"><strong>Problem:</strong> High gas fee waste on failed reverts.</div>
+                    <div class="gate-strength"><strong>Strength:</strong> Dry-runs calls to preview exact balance changes and detect reverts before broadcasting.</div>
                     <code class="gate-contract font-mono">ExecutionEngine.checkTx</code>
                 </article>
                 <article class="point-card gate-card">
                     <div class="gate-icon"><i class="fas fa-cubes"></i></div>
                     <strong class="gate-name">4. Atomic Batching (BatchCompose)</strong>
-                    <div class="gate-problem"><strong>Vấn đề:</strong> Multi-tx delay & MEV frontrun.</div>
-                    <div class="gate-strength"><strong>Sức mạnh:</strong> Gộp "Approve + Swap + Stake" thành 1 tx nguyên tử duy nhất.</div>
+                    <div class="gate-problem"><strong>Problem:</strong> Multi-tx delay & MEV frontrun.</div>
+                    <div class="gate-strength"><strong>Strength:</strong> Bundles sequential steps into a single atomic transaction, preventing MEV.</div>
                     <code class="gate-contract font-mono">ExecutionEngine.executeTx</code>
                 </article>
                 <article class="point-card gate-card">
                     <div class="gate-icon"><i class="fas fa-gauge-high"></i></div>
                     <strong class="gate-name">5. Dynamic Gas Oracle</strong>
-                    <div class="gate-problem"><strong>Vấn đề:</strong> Stuck transactions due to network spikes.</div>
-                    <div class="gate-strength"><strong>Sức mạnh:</strong> Ước lượng phí EIP-1559 tối ưu cộng 20% margin chống nghẽn.</div>
+                    <div class="gate-problem"><strong>Problem:</strong> Stuck transactions due to network spikes.</div>
+                    <div class="gate-strength"><strong>Strength:</strong> Estimates dynamic EIP-1559 base/priority fees with a 20% margin buffer.</div>
                     <code class="gate-contract font-mono">GasOracle Service</code>
                 </article>
                 <article class="point-card gate-card">
                     <div class="gate-icon"><i class="fas fa-stethoscope"></i></div>
                     <strong class="gate-name">6. Error Diagnosis (RevertDiagnose)</strong>
-                    <div class="gate-problem"><strong>Vấn đề:</strong> Cryptic revert hex data cannot be read by LLM.</div>
-                    <div class="gate-strength"><strong>Sức mạnh:</strong> Dịch hex lỗi sang tiếng Việt đề xuất Agent tự động tăng slippage.</div>
+                    <div class="gate-problem"><strong>Problem:</strong> Cryptic revert hex data cannot be read by LLM.</div>
+                    <div class="gate-strength"><strong>Strength:</strong> Translates raw revert hex into clear, actionable recommendations.</div>
                     <code class="gate-contract font-mono">RevertDiagnose decrypter</code>
                 </article>
             </div>
@@ -404,12 +404,12 @@ pharos-cli safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</code></pre>
                         <label for="sandbox-scenario">Interactive Safety Scenario Preset</label>
                         <select id="sandbox-scenario" class="form-control">
                             <option value="custom" selected>-- Custom Entry / Manual Input --</option>
-                            <option value="phishing">Kịch bản 1: Registry Gate - Phát hiện & Chặn địa chỉ Phishing giả mạo</option>
-                            <option value="approve">Kịch bản 2: SafeApprove Gate - Chặn lệnh approve Token vô hạn (Infinite Approve)</option>
-                            <option value="preview">Kịch bản 3: TxPreview Gate - Giả lập Dry-Run giao dịch an toàn</option>
-                            <option value="batch">Kịch bản 4: BatchCompose Gate - Gộp giao dịch nguyên tử (Swap & Stake)</option>
-                            <option value="oracle">Kịch bản 5: GasOracle Gate - Vượt nghẽn gas mạng với Dynamic Gas EIP-1559</option>
-                            <option value="diagnose">Kịch bản 6: RevertDiagnose Gate - Chẩn đoán lỗi trượt giá Swap DEX thất bại</option>
+                            <option value="phishing">Scenario 1: Registry Gate - Detect & Block Malicious Phishing Address</option>
+                            <option value="approve">Scenario 2: SafeApprove Gate - Intercept & Rescale Infinite Allowance Approve</option>
+                            <option value="preview">Scenario 3: TxPreview Gate - Dry-Run Simulation & Predict Asset Changes</option>
+                            <option value="batch">Scenario 4: BatchCompose Gate - Atomic Multicall Bundling (Swap & Stake)</option>
+                            <option value="oracle">Scenario 5: GasOracle Gate - Dynamic EIP-1559 Gas Estimations for Congestion</option>
+                            <option value="diagnose">Scenario 6: RevertDiagnose Gate - Decode & Solve DEX Slippage Swap Revert</option>
                         </select>
                     </div>
 
