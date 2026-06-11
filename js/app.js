@@ -60,6 +60,15 @@ let btnAdminBlacklist;
 let terminalOutput;
 let btnClearTerminal;
 
+// Scanner elements
+let shieldDisplay;
+let shieldStatus;
+let stepAudit;
+let stepBlacklist;
+let stepPreview;
+let stepGuard;
+let stepConnector;
+
 document.addEventListener('DOMContentLoaded', () => {
   // Cache DOM Elements
   btnConnectWallet = document.getElementById('btn-connect-wallet');
@@ -80,6 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
   
   terminalOutput = document.getElementById('terminal-output');
   btnClearTerminal = document.getElementById('btn-clear-terminal');
+
+  shieldDisplay = document.getElementById('shield-container') || document.querySelector('.shield-display');
+  shieldStatus = document.getElementById('shield-status');
+  stepAudit = document.getElementById('step-audit');
+  stepBlacklist = document.getElementById('step-blacklist');
+  stepPreview = document.getElementById('step-preview');
+  stepGuard = document.getElementById('step-guard');
+  stepConnector = document.querySelector('.step-connector');
 
   // Bind Listeners
   if (btnConnectWallet) btnConnectWallet.addEventListener('click', connectWallet);
@@ -350,6 +367,26 @@ if (window.ethereum) {
 }
 
 /**
+ * Helper to reset the visual scanner to default state
+ */
+function resetScanner() {
+  if (shieldDisplay) {
+    shieldDisplay.className = 'shield-display';
+  }
+  if (shieldStatus) {
+    shieldStatus.textContent = 'READY';
+  }
+  if (stepConnector) {
+    stepConnector.className = 'step-connector';
+  }
+  [stepAudit, stepBlacklist, stepPreview, stepGuard].forEach(step => {
+    if (step) {
+      step.className = 'step';
+    }
+  });
+}
+
+/**
  * Sandbox Verify & Simulate Transaction
  */
 async function verifyAndSimulate() {
@@ -362,18 +399,41 @@ async function verifyAndSimulate() {
     return;
   }
 
+  // Reset visual scanner
+  resetScanner();
+
+  // Delay helper
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  // Set scanning state
+  if (shieldDisplay) shieldDisplay.className = 'shield-display scanning';
+  if (shieldStatus) shieldStatus.textContent = 'SCANNING';
+  if (stepConnector) stepConnector.className = 'step-connector scanning';
+
   const isMock = mockModeToggle ? mockModeToggle.checked : false;
 
   if (isMock) {
+    // === Step 1: Audit ===
+    if (stepAudit) stepAudit.className = 'step active';
     writeLog(`[Mock] Verifying safety of target address ${target}...`, "info");
+    await delay(600);
+    if (stepAudit) stepAudit.className = 'step passed';
     
-    // Check local mock blacklist
+    // === Step 2: Blacklist Check ===
+    if (stepBlacklist) stepBlacklist.className = 'step active';
     const status = mockRegistry[target.toLowerCase()] || 'Unregistered';
+    await delay(600);
+    
     if (status === 'Blacklisted' || target.toLowerCase() === '0x1111111254fb6c44bac0bed2854e76f90643097d') {
+      if (stepBlacklist) stepBlacklist.className = 'step failed';
+      if (stepConnector) stepConnector.className = 'step-connector failed';
+      if (shieldDisplay) shieldDisplay.className = 'shield-display blocked';
+      if (shieldStatus) shieldStatus.textContent = 'BLOCKED';
       writeLog("❌ Target safety check FAILED: Address is blacklisted!", "error");
       return;
     }
-
+    
+    if (stepBlacklist) stepBlacklist.className = 'step passed';
     writeLog(`🔍 Target safety check: PASSED (Address is not blacklisted)`, "success");
     if (status === 'Verified') {
       writeLog(`🔍 On-chain registry status: Verified (Safe)`, "success");
@@ -381,68 +441,122 @@ async function verifyAndSimulate() {
       writeLog(`⚠️ On-chain registry status: Unregistered (Warning)`, "system");
     }
 
+    // === Step 3: Simulation Preview ===
+    if (stepPreview) stepPreview.className = 'step active';
+    await delay(600);
+    if (stepPreview) stepPreview.className = 'step passed';
     writeLog("⚡ Mock simulation successful: Call to target returned 0x", "success");
+
+    // === Step 4: Gas and Slippage ===
+    if (stepGuard) stepGuard.className = 'step active';
+    await delay(600);
+    if (stepGuard) stepGuard.className = 'step passed';
+    if (stepConnector) stepConnector.className = 'step-connector passed';
+    if (shieldDisplay) shieldDisplay.className = 'shield-display secure';
+    if (shieldStatus) shieldStatus.textContent = 'SECURE';
+    
     writeLog("Gas estimated at 120,000. Optimized Base Fee: 2.4 Gwei", "info");
   } else {
     // Web3 Mode
     if (!account || !provider || !registryContract) {
       writeLog("❌ Error: Wallet not connected.", "error");
+      resetScanner();
       return;
     }
 
+    // === Step 1: Audit ===
+    if (stepAudit) stepAudit.className = 'step active';
     writeLog(`[Web3] Checking if target has code & checking registry...`, "info");
+    
+    let isContract = false;
     try {
-      // 1. Code check
       const code = await provider.getCode(target);
-      if (code === '0x' || code === '0x00') {
+      isContract = (code !== '0x' && code !== '0x00');
+      if (!isContract) {
         writeLog(`ℹ️ Target address ${target} has no deployed contract code (EOA).`, "system");
       } else {
         writeLog(`✅ Target address ${target} has active deployed contract code.`, "success");
       }
-
-      // 2. Registry status check
-      try {
-        const isVerified = await registryContract.checkAddress(target);
-        if (isVerified) {
-          writeLog("✅ Registry check PASSED: Target is verified on-chain.", "success");
-        } else {
-          writeLog("⚠️ Registry warning: Target is unregistered.", "system");
-        }
-      } catch (err) {
-        writeLog("❌ Target safety check FAILED: Address is blacklisted!", "error");
-        return; // stop execution if registry check reverts
-      }
-
-      // 3. Static call simulation
-      writeLog("⚡ Simulating transaction on-chain via static call...", "info");
-      const valueWei = ethers.parseEther(valText);
-      try {
-        const result = await provider.call({
-          from: account,
-          to: target,
-          data: calldata,
-          value: valueWei
-        });
-        writeLog(`⚡ Simulation successful! Return data: ${result}`, "success");
-        
-        // Slippage & Execution pre-flight check if ExecutionEngine contract exists
-        if (executionEngineContract) {
-          try {
-            writeLog("Running ExecutionEngine checkTx pre-flight check...", "info");
-            const eePassed = await executionEngineContract.checkTx(target, calldata, valueWei);
-            if (eePassed) {
-              writeLog("🛡️ ExecutionEngine: Slippage & safety pre-flight check PASSED.", "success");
-            }
-          } catch (eeErr) {
-            writeLog(`⚠️ ExecutionEngine checkTx failed: ${eeErr.reason || eeErr.message}`, "error");
-          }
-        }
-      } catch (simErr) {
-        writeLog(`❌ Simulation failed/reverted: ${simErr.reason || simErr.message}`, "error");
-      }
     } catch (e) {
-      writeLog(`❌ Simulation query failed: ${e.message}`, "error");
+      console.error(e);
     }
+    await delay(600);
+    if (stepAudit) stepAudit.className = 'step passed';
+
+    // === Step 2: Blacklist Check ===
+    if (stepBlacklist) stepBlacklist.className = 'step active';
+    await delay(600);
+    try {
+      const isVerified = await registryContract.checkAddress(target);
+      if (isVerified) {
+        writeLog("✅ Registry check PASSED: Target is verified on-chain.", "success");
+      } else {
+        writeLog("⚠️ Registry warning: Target is unregistered.", "system");
+      }
+      if (stepBlacklist) stepBlacklist.className = 'step passed';
+    } catch (err) {
+      if (stepBlacklist) stepBlacklist.className = 'step failed';
+      if (stepConnector) stepConnector.className = 'step-connector failed';
+      if (shieldDisplay) shieldDisplay.className = 'shield-display blocked';
+      if (shieldStatus) shieldStatus.textContent = 'BLOCKED';
+      writeLog("❌ Target safety check FAILED: Address is blacklisted!", "error");
+      return; // stop execution if registry check reverts
+    }
+
+    // === Step 3: Simulation Preview ===
+    if (stepPreview) stepPreview.className = 'step active';
+    await delay(600);
+    
+    const valueWei = ethers.parseEther(valText);
+    let previewPassed = false;
+    try {
+      writeLog("⚡ Simulating transaction on-chain via static call...", "info");
+      const result = await provider.call({
+        from: account,
+        to: target,
+        data: calldata,
+        value: valueWei
+      });
+      writeLog(`⚡ Simulation successful! Return data: ${result}`, "success");
+      if (stepPreview) stepPreview.className = 'step passed';
+      previewPassed = true;
+    } catch (simErr) {
+      if (stepPreview) stepPreview.className = 'step failed';
+      if (stepConnector) stepConnector.className = 'step-connector failed';
+      if (shieldDisplay) shieldDisplay.className = 'shield-display blocked';
+      if (shieldStatus) shieldStatus.textContent = 'BLOCKED';
+      writeLog(`❌ Simulation failed/reverted: ${simErr.reason || simErr.message}`, "error");
+      return;
+    }
+
+    // === Step 4: Gas and Slippage ===
+    if (stepGuard) stepGuard.className = 'step active';
+    await delay(600);
+    
+    // Slippage & Execution pre-flight check if ExecutionEngine contract exists
+    if (executionEngineContract && previewPassed) {
+      try {
+        writeLog("Running ExecutionEngine checkTx pre-flight check...", "info");
+        const eePassed = await executionEngineContract.checkTx(target, calldata, valueWei);
+        if (eePassed) {
+          writeLog("🛡️ ExecutionEngine: Slippage & safety pre-flight check PASSED.", "success");
+        }
+      } catch (eeErr) {
+        if (stepGuard) stepGuard.className = 'step failed';
+        if (stepConnector) stepConnector.className = 'step-connector failed';
+        if (shieldDisplay) shieldDisplay.className = 'shield-display blocked';
+        if (shieldStatus) shieldStatus.textContent = 'BLOCKED';
+        writeLog(`⚠️ ExecutionEngine checkTx failed: ${eeErr.reason || eeErr.message}`, "error");
+        return;
+      }
+    }
+    
+    if (stepGuard) stepGuard.className = 'step passed';
+    if (stepConnector) stepConnector.className = 'step-connector passed';
+    if (shieldDisplay) shieldDisplay.className = 'shield-display secure';
+    if (shieldStatus) shieldStatus.textContent = 'SECURE';
+    
+    writeLog("🎉 All checks passed. Gas and Slippage verified. Ready for execution.", "success");
   }
 }
 

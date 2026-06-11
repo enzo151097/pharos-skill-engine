@@ -80,6 +80,34 @@
                     <button type="button" id="btn-safe-execute" class="btn btn-primary" disabled>Safe Execute</button>
                 </div>
             </form>
+            
+            <!-- Visual Scanner Pipeline -->
+            <div class="scanner-container" id="scanner-container">
+                <div class="shield-display">
+                    <div class="shield-glow" id="shield-glow"></div>
+                    <div class="shield-icon" id="shield-icon">🛡️</div>
+                    <div class="shield-status" id="shield-status">READY</div>
+                </div>
+                <div class="pipeline-steps">
+                    <div class="step-connector"></div>
+                    <div class="step" id="step-audit">
+                        <div class="step-dot">🔍</div>
+                        <span class="step-label">Audit</span>
+                    </div>
+                    <div class="step" id="step-blacklist">
+                        <div class="step-dot">🛡️</div>
+                        <span class="step-label">Registry</span>
+                    </div>
+                    <div class="step" id="step-preview">
+                        <div class="step-dot">⚙️</div>
+                        <span class="step-label">Preview</span>
+                    </div>
+                    <div class="step" id="step-guard">
+                        <div class="step-dot">⛽</div>
+                        <span class="step-label">Fees</span>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Card 2: Protocol Registry & Monitor -->
