@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Font Awesome Free Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- Styling stylesheet (Vanilla CSS with rich aesthetics) -->
     <link rel="stylesheet" href="css/style.css?v=3">
     
@@ -346,25 +349,25 @@ npx pharos-cli safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</code></p
                 <div class="scanner-container" id="scanner-container">
                     <div class="shield-display">
                         <div class="shield-glow" id="shield-glow"></div>
-                        <div class="shield-icon" id="shield-icon">🛡️</div>
+                        <div class="shield-icon" id="shield-icon"><i class="fas fa-shield-halved"></i></div>
                         <div class="shield-status" id="shield-status">READY</div>
                     </div>
                     <div class="pipeline-steps">
                         <div class="step-connector"></div>
                         <div class="step" id="step-audit">
-                            <div class="step-dot">🔍</div>
+                            <div class="step-dot"><i class="fas fa-magnifying-glass"></i></div>
                             <span class="step-label">Audit</span>
                         </div>
                         <div class="step" id="step-blacklist">
-                            <div class="step-dot">🛡️</div>
+                            <div class="step-dot"><i class="fas fa-list-check"></i></div>
                             <span class="step-label">Registry</span>
                         </div>
                         <div class="step" id="step-preview">
-                            <div class="step-dot">⚙️</div>
+                            <div class="step-dot"><i class="fas fa-bolt"></i></div>
                             <span class="step-label">Preview</span>
                         </div>
                         <div class="step" id="step-guard">
-                            <div class="step-dot">⛽</div>
+                            <div class="step-dot"><i class="fas fa-gas-pump"></i></div>
                             <span class="step-label">Fees</span>
                         </div>
                     </div>

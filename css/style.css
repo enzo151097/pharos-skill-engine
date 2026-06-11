@@ -869,6 +869,13 @@ input:checked + .slider:before {
     color: var(--text-secondary);
 }
 
+.step-dot i {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .step-label {
     font-size: 9px;
     font-weight: 600;
