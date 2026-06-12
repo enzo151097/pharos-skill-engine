@@ -203,7 +203,7 @@ The core gateway contracts are deployed and verified on the Pharos Atlantic Test
 | **Network Name** | Pharos Atlantic Testnet |
 | **RPC URL** | `https://atlantic.dplabs-internal.com` |
 | **Chain ID** | `688689` (Hex: `0xa8219`) |
-| **Currency Symbol** | `ETH` |
+| **Currency Symbol** | `PHRS` |
 | **Block Explorer** | `https://atlantic.pharosscan.xyz` |
 
 ### Deployed Contract Addresses

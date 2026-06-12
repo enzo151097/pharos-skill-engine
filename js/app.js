@@ -479,8 +479,8 @@ async function checkAndSwitchNetwork() {
             chainId: '0xa8219',
             chainName: 'Pharos Atlantic Testnet',
             nativeCurrency: {
-              name: 'ETH',
-              symbol: 'ETH',
+              name: 'PHRS',
+              symbol: 'PHRS',
               decimals: 18
             },
             rpcUrls: ['https://atlantic.dplabs-internal.com'],
@@ -714,14 +714,14 @@ async function verifyAndSimulate() {
       writeLog("🛡️ [RevertDiagnose Gate] 🔍 DECODING ERROR: Successfully decoded raw revert hex 0x08c379a0...", "info");
       writeLog("🛡️ [RevertDiagnose Gate] 📊 DIAGNOSIS: Reverted with 'UniswapV2Router: EXCEEDED_SLIPPAGE_TOLERANCE'. Actual price impact was 3.2%, which exceeds your 1.0% limit.", "error");
       writeLog("🛡️ [RevertDiagnose Gate] 💡 RECOMMENDATION: Adjust slippage tolerance to 3.5% or split the transaction size.", "info");
-      writeLog("🛡️ [Shield Output] ❌ Transaction halted before broadcasting. Saved 0.0045 ETH in wasted gas fees.", "error");
+      writeLog("🛡️ [Shield Output] ❌ Transaction halted before broadcasting. Saved 0.0045 PHRS in wasted gas fees.", "error");
       return;
     }
 
     if (activePreset === 'preview') {
       writeLog("🛡️ [TxPreview Gate] 📊 PREDICTED ASSET CHANGES (TxPreview):", "info");
       writeLog("• Agent Wallet (0xAgent): <span style='color: #ef4444;'>-100.0 USDT</span>", "info");
-      writeLog("• Agent Wallet (0xAgent): <span style='color: var(--color-green);'>+0.034 ETH</span>", "info");
+      writeLog("• Agent Wallet (0xAgent): <span style='color: var(--color-green);'>+0.034 PHRS</span>", "info");
       writeLog("🛡️ [TxPreview Gate] ✅ VERIFIED: Simulation successful. Asset changes match predictions.", "success");
     } else {
       writeLog("🛡️ [TxPreview Gate] ✅ SUCCESS: Dry-run static call returned 0x (No error reverts).", "success");

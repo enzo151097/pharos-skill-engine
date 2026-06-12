@@ -288,7 +288,7 @@ async function executeSecurely() {
   const receipt = await sdk.safeExecute(
     "0x2c692A2291ad46D034bAbF4a5ACF287341B7797a", // Target Contract
     "0x",                                         // Calldata Hex
-    "0"                                           // Value in ETH
+    "0"                                           // Value in PHRS
   );
   return receipt;
 }</code></pre>
@@ -428,7 +428,7 @@ pharos-cli safety-check 0x2c692A2291ad46D034bAbF4a5ACF287341B7797a</code></pre>
                     </div>
                     
                     <div class="form-group">
-                        <label for="sandbox-value">Value (ETH)</label>
+                        <label for="sandbox-value">Value (PHRS)</label>
                         <input type="number" id="sandbox-value" class="form-control" placeholder="0" value="0" step="any" min="0" required>
                     </div>
                     
