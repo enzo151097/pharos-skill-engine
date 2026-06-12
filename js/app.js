@@ -466,7 +466,7 @@ async function checkAndSwitchNetwork() {
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0xa8219' }] // Hex of 688689
+      params: [{ chainId: '0xa8231' }] // Hex of 688689
     });
     return true;
   } catch (switchError) {
@@ -476,7 +476,7 @@ async function checkAndSwitchNetwork() {
         await window.ethereum.request({
           method: 'wallet_addEthereumChain',
           params: [{
-            chainId: '0xa8219',
+            chainId: '0xa8231',
             chainName: 'Pharos Atlantic Testnet',
             nativeCurrency: {
               name: 'PHRS',
